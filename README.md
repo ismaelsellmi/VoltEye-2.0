@@ -52,7 +52,7 @@ Détails : [docs/architecture.md](docs/architecture.md).
 Prérequis : Python 3.10 à 3.12.
 
 ```bash
-git clone <url-du-depot> volteye
+git clone https://github.com/wathekzg/VOLTEYE.git volteye
 cd volteye
 python -m venv .venv
 # Windows : .venv\Scripts\activate     Linux / macOS : source .venv/bin/activate
