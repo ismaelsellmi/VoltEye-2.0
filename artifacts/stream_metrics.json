@@ -1,0 +1,97 @@
+{
+  "site": [
+    {
+      "nom": "Four F1",
+      "type": "four",
+      "libelle": "Four / étuve résistif",
+      "p_nominale_kW": 29.67857618970146,
+      "fp": 0.9844941046040725
+    },
+    {
+      "nom": "Compresseur C1",
+      "type": "compresseur",
+      "libelle": "Compresseur d'air (moteur asynchrone)",
+      "p_nominale_kW": 16.294027484859928,
+      "fp": 0.8050680868001439
+    },
+    {
+      "nom": "CNC-01",
+      "type": "cnc",
+      "libelle": "Machine CNC (variateur de vitesse)",
+      "p_nominale_kW": 16.863483749283276,
+      "fp": 0.9671433959284355
+    },
+    {
+      "nom": "Convoyeur L1",
+      "type": "convoyeur",
+      "libelle": "Convoyeur (moteur direct)",
+      "p_nominale_kW": 5.400154318371776,
+      "fp": 0.7861254108707667
+    },
+    {
+      "nom": "Éclairage atelier",
+      "type": "eclairage",
+      "libelle": "Éclairage LED (drivers électroniques)",
+      "p_nominale_kW": 4.487366009876677,
+      "fp": 0.9055988305294113
+    },
+    {
+      "nom": "Soudage S1",
+      "type": "soudage",
+      "libelle": "Poste de soudage (onduleur)",
+      "p_nominale_kW": 14.182484100946956,
+      "fp": 0.6812144562559551
+    },
+    {
+      "nom": "CVC atelier",
+      "type": "cvc",
+      "libelle": "CVC / climatisation (compresseur inverter)",
+      "p_nominale_kW": 11.294507408468881,
+      "fp": 0.9306351791107316
+    }
+  ],
+  "evenements_reels": 194,
+  "evenements_detectes": 190,
+  "detection_precision": 1.0,
+  "detection_rappel": 0.979381443298969,
+  "detection_f1": 0.9895833333333333,
+  "classification_exactitude": 0.9842105263157894,
+  "precision_energetique": 0.9939504288029539,
+  "par_machine": {
+    "four": {
+      "energie_vraie_kWh": 64.81461399829027,
+      "energie_estimee_kWh": 65.38224879095218,
+      "erreur_relative": 0.008757821078389502
+    },
+    "compresseur": {
+      "energie_vraie_kWh": 26.99496484766706,
+      "energie_estimee_kWh": 27.029954536647914,
+      "erreur_relative": 0.001296156123125233
+    },
+    "cnc": {
+      "energie_vraie_kWh": 37.0552943033297,
+      "energie_estimee_kWh": 36.91755518967261,
+      "erreur_relative": 0.0037171237267629464
+    },
+    "convoyeur": {
+      "energie_vraie_kWh": 12.835604546062788,
+      "energie_estimee_kWh": 13.27722802358386,
+      "erreur_relative": 0.034406129912792904
+    },
+    "eclairage": {
+      "energie_vraie_kWh": 14.408149638876004,
+      "energie_estimee_kWh": 15.14740866646861,
+      "erreur_relative": 0.051308394632294814
+    },
+    "soudage": {
+      "energie_vraie_kWh": 13.345711939424861,
+      "energie_estimee_kWh": 12.947974821185921,
+      "erreur_relative": 0.029802615255314763
+    },
+    "cvc": {
+      "energie_vraie_kWh": 22.670315624349197,
+      "energie_estimee_kWh": 22.664755285974937,
+      "erreur_relative": 0.00024526956158859876
+    }
+  }
+}

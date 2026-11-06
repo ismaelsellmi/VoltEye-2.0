@@ -1,0 +1,102 @@
+{
+  "models": {
+    "VoltEye - résidus + score robuste (MAD)": {
+      "precision": 0.9814814814814815,
+      "rappel": 0.7910447761194029,
+      "f1": 0.8760330578512396
+    },
+    "Variante - résidus + Isolation Forest": {
+      "precision": 0.5217391304347826,
+      "rappel": 0.5373134328358209,
+      "f1": 0.5294117647058824
+    },
+    "Baseline - z-score énergie journalière": {
+      "precision": 0.13559322033898305,
+      "rappel": 0.23880597014925373,
+      "f1": 0.17297297297297298
+    }
+  },
+  "rappel_par_type": {
+    "eclairage_weekend": {
+      "jours": 4,
+      "rappel_volteye": 1.0,
+      "rappel_iforest": 1.0,
+      "rappel_baseline": 1.0
+    },
+    "fuite_air": {
+      "jours": 33,
+      "rappel_volteye": 0.6363636363636364,
+      "rappel_iforest": 0.30303030303030304,
+      "rappel_baseline": 0.18181818181818182
+    },
+    "panne": {
+      "jours": 2,
+      "rappel_volteye": 1.0,
+      "rappel_iforest": 1.0,
+      "rappel_baseline": 1.0
+    },
+    "pic": {
+      "jours": 10,
+      "rappel_volteye": 0.9,
+      "rappel_iforest": 1.0,
+      "rappel_baseline": 0.1
+    },
+    "veille": {
+      "jours": 18,
+      "rappel_volteye": 0.9444444444444444,
+      "rappel_iforest": 0.5555555555555556,
+      "rappel_baseline": 0.16666666666666666
+    }
+  },
+  "impact_anomalies_detectees": {
+    "kWh_gaspilles_detectes": 2789.625360335762,
+    "TND": 831.4374128531664,
+    "kg_CO2": 1394.812680167881
+  },
+  "maintenance": {
+    "four": {
+      "premiere_alerte": null,
+      "jours_en_alerte": 0
+    },
+    "compresseur": {
+      "premiere_alerte": null,
+      "jours_en_alerte": 0
+    },
+    "cnc": {
+      "premiere_alerte": null,
+      "jours_en_alerte": 0
+    },
+    "convoyeur": {
+      "premiere_alerte": "2026-04-21",
+      "jours_en_alerte": 32
+    },
+    "eclairage": {
+      "premiere_alerte": null,
+      "jours_en_alerte": 0
+    },
+    "soudage": {
+      "premiere_alerte": null,
+      "jours_en_alerte": 0
+    },
+    "cvc": {
+      "premiere_alerte": null,
+      "jours_en_alerte": 0
+    },
+    "anticipation_panne_convoyeur_jours": 27,
+    "fausses_alertes_autres_machines_jours": 0
+  },
+  "types": {
+    "veille": "Veille excessive (machine laissée sous tension hors production)",
+    "fuite_air": "Fuite d'air comprimé (compresseur en surcharge)",
+    "degradation": "Dégradation progressive (THD et consommation en hausse)",
+    "panne": "Arrêt sur panne",
+    "pic": "Pic de consommation anormal",
+    "eclairage_weekend": "Éclairage resté allumé le week-end"
+  },
+  "recommandations": {
+    "hors_production": "Couper la machine hors production (programmation horaire ou arrêt automatique).",
+    "production": "Vérifier les réglages et l'état de la machine : surconsommation pendant la production.",
+    "pic": "Contrôler la régulation (thermostat, variateur) : pic horaire anormal.",
+    "sous_consommation": "Arrêt ou sous-consommation inattendue : vérifier une éventuelle panne."
+  }
+}

@@ -1,0 +1,149 @@
+# ⚡👁️ VoltEye
+
+**See the invisible energy of smart cities.**
+*Un seul capteur. Toutes les machines. Des villes plus intelligentes.*
+
+> Smart City Challenge 2026 · **Track 2 : Smart City for Intelligent Energy** · partenaire industriel : STEG
+
+VoltEye est une plateforme d'**intelligence énergétique non intrusive** pour les sites industriels.
+Un **point de mesure unique** à l'arrivée électrique d'un atelier suffit : l'IA reconnaît chaque machine
+à sa **signature électrique** (forme d'onde et harmoniques), reconstitue sa consommation, détecte les
+gaspillages, anticipe les pannes et optimise le planning selon le tarif horaire. Aucun capteur n'est posé
+sur les machines, aucun arrêt de production n'est nécessaire.
+
+![Tableau de bord VoltEye](docs/captures/accueil.jpg)
+
+---
+
+## Le problème
+
+Dans la plupart des usines, l'énergie n'est suivie qu'à travers la facture mensuelle. On ne voit ni la
+machine laissée sous tension la nuit, ni la fuite d'air comprimé, ni le moteur qui se dégrade, ni la
+cuisson lancée à l'heure de pointe. Poser un compteur sur chaque machine coûte cher, impose des arrêts
+et des modifications d'équipements souvent certifiés. **Ce qui n'est pas mesuré n'est pas maîtrisé.**
+
+## La solution
+
+| Fonction | Méthode IA | Résultat sur données de test |
+|---|---|---|
+| **Reconnaître** les machines | Ondelettes + harmoniques → images GAF → CNN, fusionné avec une forêt aléatoire sur le spectre | **98,1 %** d'exactitude (7 types de machines) |
+| **Désagréger** le signal unique | Détection d'événements + reconnaissance | **99,4 %** de précision énergétique, F1 détection 0,99 |
+| **Prévoir** la consommation à J+1 | Gradient boosting (calendrier, météo, retards ≥ 24 h) | **MAPE 7,5 %** (baseline : 12,3 %) |
+| **Détecter** les gaspillages | Modèle de consommation attendue + score robuste des résidus | **F1 0,88**, précision 0,98 (baseline z-score : F1 0,17) |
+| **Anticiper** les pannes | Dérive de la distorsion harmonique (THD), score de santé | panne anticipée **27 jours** avant, 0 fausse alerte |
+| **Optimiser** le planning | Programme linéaire en nombres entiers (HiGHS) sur le tarif horaire | **-12,6 %** sur la facture des jours ouvrés, -77 kW de pointe |
+
+Toutes les métriques sont mesurées sur des données jamais vues à l'entraînement et comparées à des
+baselines (voir [docs/resultats.md](docs/resultats.md) et la page « Évaluation » de l'application).
+
+## Architecture
+
+```
+ Machines ─► point de mesure ─► capteur de puissance ─► passerelle edge ─► réseau ─► cloud ─► tableau de bord
+ (charges)   unique              (courant, tension)     (Raspberry Pi 5)   NB-IoT/5G  (analyse)  (usine, ville, STEG)
+```
+
+Détails : [docs/architecture.md](docs/architecture.md).
+
+![Chaîne de reconnaissance](docs/figures/fig_gaf_pipeline.png)
+
+## Installation et lancement
+
+Prérequis : Python 3.10 à 3.12.
+
+```bash
+git clone <url-du-depot> volteye
+cd volteye
+python -m venv .venv
+# Windows : .venv\Scripts\activate     Linux / macOS : source .venv/bin/activate
+pip install torch --index-url https://download.pytorch.org/whl/cpu
+pip install -r requirements.txt
+```
+
+Les modèles entraînés et les résultats sont fournis dans `artifacts/`. Pour lancer le tableau de bord :
+
+```bash
+streamlit run app/streamlit_app.py
+```
+
+Pour tout régénérer (données simulées, entraînement, évaluation, figures, environ 1 minute) :
+
+```bash
+python -m volteye.pipeline
+```
+
+Tests :
+
+```bash
+python tests/test_volteye.py
+```
+
+## Le tableau de bord
+
+| Page | Contenu |
+|---|---|
+| Vue d'ensemble | Indicateurs clés, répartition par machine, alertes récentes |
+| Surveillance en direct | Rejeu du flux capteur seconde par seconde, machines reconnues, image GAF de chaque événement |
+| Reconnaissance IA (GAF) | Démonstration interactive : choisir une machine, une charge, un niveau de bruit et suivre la chaîne signal → image → décision |
+| Anomalies & maintenance | Alertes expliquées avec coût (TND) et CO₂, score de santé des machines à une date choisie |
+| Prévision & optimisation | Prévision J+1 contre réel, planning optimisé selon le tarif horaire |
+| Vue ville | Carte de 10 sites industriels tunisiens équipés |
+| Évaluation des modèles | Toutes les métriques, baselines et matrices de confusion |
+
+![Surveillance en direct](docs/captures/surveillance.jpg)
+
+## Structure du dépôt
+
+```
+volteye/
+├── volteye/                 code source
+│   ├── config.py            paramètres (réseau 50 Hz, tarifs, facteur d'émission)
+│   ├── signals.py           catalogue des machines, formes d'onde, mesures, séquences
+│   ├── gaf.py               Gramian Angular Field
+│   ├── recognition.py       reconnaissance (baselines, CNN GAF, fusion) et évaluation
+│   ├── stream.py            flux temps réel et désagrégation par événements
+│   ├── history.py           historique horaire d'un an avec anomalies étiquetées
+│   ├── forecasting.py       prévision J+1
+│   ├── anomaly.py           détection d'anomalies et maintenance prédictive
+│   ├── optimization.py      optimisation du planning (PuLP / HiGHS)
+│   ├── city.py              vue multi-sites
+│   ├── figures.py           figures du rapport
+│   └── pipeline.py          exécution de bout en bout
+├── app/streamlit_app.py     tableau de bord
+├── artifacts/               modèles entraînés, données et métriques
+├── docs/                    architecture, données, résultats, figures, captures
+├── tests/                   tests de cohérence
+└── livrables/               rapport technique, pitch, script vidéo
+```
+
+## Données
+
+Le règlement du challenge autorise les données simulées. VoltEye utilise un **simulateur physique**
+documenté dans [docs/donnees.md](docs/donnees.md) : formes d'onde de 7 types de machines industrielles
+(réseau 50 Hz, échantillonnage 3,2 kHz), un atelier en fonctionnement réel pendant 4 h à 1 mesure/s, et un
+an d'historique horaire tenant compte des postes, du calendrier tunisien (jours fériés, Ramadan) et de la
+température. Des anomalies réalistes sont injectées avec leur vérité terrain pour mesurer les modèles.
+Le simulateur produit les mêmes grandeurs qu'un vrai capteur : il suffit de le remplacer par le flux du
+capteur pour passer en conditions réelles.
+
+**Hypothèses à confirmer** : tarif horaire industriel et facteur d'émission du réseau tunisien
+(`volteye/config.py`), à remplacer par les valeurs officielles STEG / ANME.
+
+## Limites et prochaines étapes
+
+- Validation sur données réelles : un pilote de 4 semaines sur un atelier, avec quelques compteurs de référence.
+- Machines identiques fonctionnant en parallèle : à distinguer par la localisation (plusieurs points de mesure) ou le contexte de production.
+- Mesure triphasée réelle : capteur avec pinces ampèremétriques et échantillonnage ≥ 3,2 kHz pour les harmoniques.
+- Pilotage automatique des charges (effacement aux heures de pointe en lien avec le distributeur).
+
+## Références
+
+- G. W. Hart, « Nonintrusive appliance load monitoring », *Proceedings of the IEEE*, 1992.
+- Z. Wang, T. Oates, « Imaging time-series to improve classification and imputation », *IJCAI*, 2015 (Gramian Angular Field).
+- F. T. Liu, K. M. Ting, Z.-H. Zhou, « Isolation Forest », *IEEE ICDM*, 2008.
+- Q. Huangfu, J. A. J. Hall, « Parallelizing the dual revised simplex method », *Mathematical Programming Computation*, 2018 (solveur HiGHS).
+- Chaîne ondelettes → GAF → CNN pour la reconnaissance de charges : inspirée de travaux publiés sur le NILM par images GAF (référence de l'article source de l'équipe à compléter).
+
+## Équipe
+
+Équipe VoltEye, Smart City Challenge 2026. *(Noms et rôles à compléter.)*

@@ -1,0 +1,315 @@
+{
+  "classes": [
+    "four",
+    "compresseur",
+    "cnc",
+    "convoyeur",
+    "eclairage",
+    "soudage",
+    "cvc"
+  ],
+  "labels": [
+    "Four / étuve résistif",
+    "Compresseur d'air (moteur asynchrone)",
+    "Machine CNC (variateur de vitesse)",
+    "Convoyeur (moteur direct)",
+    "Éclairage LED (drivers électroniques)",
+    "Poste de soudage (onduleur)",
+    "CVC / climatisation (compresseur inverter)"
+  ],
+  "n_train": 4900,
+  "n_val": 1050,
+  "n_test": 2100,
+  "models": {
+    "A - Mesures classiques + forêt aléatoire": {
+      "accuracy": 0.9080952380952381,
+      "f1_macro": 0.9082316732056342,
+      "ms_par_evenement": 0.061508999982227884,
+      "accuracy_bruit_x3": 0.7942857142857143
+    },
+    "B - Spectre FFT + forêt aléatoire": {
+      "accuracy": 0.9776190476190476,
+      "f1_macro": 0.977635973949857,
+      "ms_par_evenement": 0.07170780949915449,
+      "accuracy_bruit_x3": 0.861904761904762
+    },
+    "C - Ondelettes + GAF + CNN": {
+      "accuracy": 0.9742857142857143,
+      "f1_macro": 0.9742648262684384,
+      "ms_par_evenement": 0.27302509517453255,
+      "accuracy_bruit_x3": 0.8847619047619047
+    },
+    "D - VoltEye : fusion CNN GAF + spectre FFT": {
+      "accuracy": 0.9809523809523809,
+      "f1_macro": 0.9809194346917385,
+      "ms_par_evenement": 0.3881827143153974,
+      "accuracy_bruit_x3": 0.8904761904761904
+    }
+  },
+  "confusion_volteye": [
+    [
+      300,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      276,
+      0,
+      23,
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      300,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      11,
+      0,
+      288,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      1,
+      0,
+      298,
+      1,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      2,
+      298,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      300
+    ]
+  ],
+  "confusion_baseline_A": [
+    [
+      298,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      264,
+      0,
+      33,
+      0,
+      0,
+      3
+    ],
+    [
+      0,
+      0,
+      265,
+      0,
+      7,
+      5,
+      23
+    ],
+    [
+      1,
+      19,
+      0,
+      275,
+      4,
+      0,
+      1
+    ],
+    [
+      0,
+      0,
+      16,
+      6,
+      257,
+      2,
+      19
+    ],
+    [
+      0,
+      0,
+      7,
+      1,
+      1,
+      291,
+      0
+    ],
+    [
+      0,
+      0,
+      10,
+      0,
+      33,
+      0,
+      257
+    ]
+  ],
+  "training_history": [
+    {
+      "epoch": 1,
+      "val_accuracy": 0.7171428571428572,
+      "loss": 0.353668749332428
+    },
+    {
+      "epoch": 2,
+      "val_accuracy": 0.9085714285714286,
+      "loss": 0.16131506860256195
+    },
+    {
+      "epoch": 3,
+      "val_accuracy": 0.9533333333333334,
+      "loss": 0.12528787553310394
+    },
+    {
+      "epoch": 4,
+      "val_accuracy": 0.9466666666666667,
+      "loss": 0.11262820661067963
+    },
+    {
+      "epoch": 5,
+      "val_accuracy": 0.9485714285714286,
+      "loss": 0.16821527481079102
+    },
+    {
+      "epoch": 6,
+      "val_accuracy": 0.9295238095238095,
+      "loss": 0.10237264633178711
+    },
+    {
+      "epoch": 7,
+      "val_accuracy": 0.9666666666666667,
+      "loss": 0.05993819981813431
+    },
+    {
+      "epoch": 8,
+      "val_accuracy": 0.9723809523809523,
+      "loss": 0.06271916627883911
+    },
+    {
+      "epoch": 9,
+      "val_accuracy": 0.9571428571428572,
+      "loss": 0.20271062850952148
+    },
+    {
+      "epoch": 10,
+      "val_accuracy": 0.9457142857142857,
+      "loss": 0.07610110193490982
+    },
+    {
+      "epoch": 11,
+      "val_accuracy": 0.9733333333333334,
+      "loss": 0.03774849325418472
+    },
+    {
+      "epoch": 12,
+      "val_accuracy": 0.960952380952381,
+      "loss": 0.023082681000232697
+    },
+    {
+      "epoch": 13,
+      "val_accuracy": 0.9438095238095238,
+      "loss": 0.011498934589326382
+    },
+    {
+      "epoch": 14,
+      "val_accuracy": 0.9552380952380952,
+      "loss": 0.0699482262134552
+    },
+    {
+      "epoch": 15,
+      "val_accuracy": 0.9438095238095238,
+      "loss": 0.02669621631503105
+    },
+    {
+      "epoch": 16,
+      "val_accuracy": 0.9742857142857143,
+      "loss": 0.02961166761815548
+    },
+    {
+      "epoch": 17,
+      "val_accuracy": 0.9685714285714285,
+      "loss": 0.02695644460618496
+    },
+    {
+      "epoch": 18,
+      "val_accuracy": 0.9704761904761905,
+      "loss": 0.1153118759393692
+    },
+    {
+      "epoch": 19,
+      "val_accuracy": 0.9771428571428571,
+      "loss": 0.04603232070803642
+    },
+    {
+      "epoch": 20,
+      "val_accuracy": 0.9723809523809523,
+      "loss": 0.04481646791100502
+    },
+    {
+      "epoch": 21,
+      "val_accuracy": 0.9742857142857143,
+      "loss": 0.02423381432890892
+    },
+    {
+      "epoch": 22,
+      "val_accuracy": 0.9761904761904762,
+      "loss": 0.0381917841732502
+    },
+    {
+      "epoch": 23,
+      "val_accuracy": 0.9742857142857143,
+      "loss": 0.01468410063534975
+    },
+    {
+      "epoch": 24,
+      "val_accuracy": 0.9733333333333334,
+      "loss": 0.008403021842241287
+    },
+    {
+      "epoch": 25,
+      "val_accuracy": 0.9714285714285714,
+      "loss": 0.014367259107530117
+    }
+  ],
+  "per_class_f1_volteye": {
+    "four": 0.9983,
+    "compresseur": 0.9404,
+    "cnc": 0.9983,
+    "convoyeur": 0.9427,
+    "eclairage": 0.9917,
+    "soudage": 0.995,
+    "cvc": 1.0
+  }
+}

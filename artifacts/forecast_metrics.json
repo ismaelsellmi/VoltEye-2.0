@@ -1,0 +1,23 @@
+{
+  "periode_test": [
+    "2026-09-02 00:00:00",
+    "2026-10-31 23:00:00"
+  ],
+  "models": {
+    "VoltEye - gradient boosting": {
+      "MAE_kWh": 1.5080793398266001,
+      "RMSE_kWh": 2.202885894009083,
+      "MAPE_%_heures_actives": 7.549316829499526
+    },
+    "Baseline - même heure la veille": {
+      "MAE_kWh": 15.16551353352661,
+      "RMSE_kWh": 30.350761925678707,
+      "MAPE_%_heures_actives": 55.36962804379028
+    },
+    "Baseline - même heure semaine précédente": {
+      "MAE_kWh": 3.8230620823384065,
+      "RMSE_kWh": 10.569584011013514,
+      "MAPE_%_heures_actives": 12.307988597425444
+    }
+  }
+}
