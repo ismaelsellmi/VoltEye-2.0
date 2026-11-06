@@ -9,6 +9,11 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
+from streamlit import runtime
+
+if not runtime.exists():
+    sys.exit("Ce fichier est une application Streamlit. Depuis le dossier volteye, avec l'environnement .venv activé :\n"
+             "    streamlit run app/streamlit_app.py")
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from volteye import config as C  # noqa: E402
