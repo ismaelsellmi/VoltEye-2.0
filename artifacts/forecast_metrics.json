@@ -5,9 +5,9 @@
   ],
   "models": {
     "VoltEye - gradient boosting": {
-      "MAE_kWh": 1.5080793398266001,
-      "RMSE_kWh": 2.202885894009083,
-      "MAPE_%_heures_actives": 7.549316829499526
+      "MAE_kWh": 1.5197591880656982,
+      "RMSE_kWh": 2.2151444049846245,
+      "MAPE_%_heures_actives": 7.722543289660007
     },
     "Baseline - même heure la veille": {
       "MAE_kWh": 15.16551353352661,

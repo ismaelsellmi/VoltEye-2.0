@@ -55,8 +55,8 @@
   "detection_precision": 1.0,
   "detection_rappel": 0.979381443298969,
   "detection_f1": 0.9895833333333333,
-  "classification_exactitude": 0.9842105263157894,
-  "precision_energetique": 0.9939504288029539,
+  "classification_exactitude": 0.9894736842105263,
+  "precision_energetique": 0.9917990160162481,
   "par_machine": {
     "four": {
       "energie_vraie_kWh": 64.81461399829027,
@@ -65,8 +65,8 @@
     },
     "compresseur": {
       "energie_vraie_kWh": 26.99496484766706,
-      "energie_estimee_kWh": 27.029954536647914,
-      "erreur_relative": 0.001296156123125233
+      "energie_estimee_kWh": 27.494900177720247,
+      "erreur_relative": 0.018519576997944945
     },
     "cnc": {
       "energie_vraie_kWh": 37.0552943033297,
@@ -75,8 +75,8 @@
     },
     "convoyeur": {
       "energie_vraie_kWh": 12.835604546062788,
-      "energie_estimee_kWh": 13.27722802358386,
-      "erreur_relative": 0.034406129912792904
+      "energie_estimee_kWh": 12.032247831236072,
+      "erreur_relative": 0.06258814783080387
     },
     "eclairage": {
       "energie_vraie_kWh": 14.408149638876004,

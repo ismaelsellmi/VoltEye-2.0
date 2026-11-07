@@ -1,9 +1,9 @@
 {
   "models": {
     "VoltEye - résidus + score robuste (MAD)": {
-      "precision": 0.9814814814814815,
+      "precision": 0.9636363636363636,
       "rappel": 0.7910447761194029,
-      "f1": 0.8760330578512396
+      "f1": 0.8688524590163934
     },
     "Variante - résidus + Isolation Forest": {
       "precision": 0.5217391304347826,
@@ -49,9 +49,9 @@
     }
   },
   "impact_anomalies_detectees": {
-    "kWh_gaspilles_detectes": 2789.625360335762,
-    "TND": 831.4374128531664,
-    "kg_CO2": 1394.812680167881
+    "kWh_gaspilles_detectes": 2782.750140647522,
+    "TND": 829.0611140848757,
+    "kg_CO2": 1391.375070323761
   },
   "maintenance": {
     "four": {
