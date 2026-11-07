@@ -24,25 +24,25 @@
     "A - Mesures classiques + forêt aléatoire": {
       "accuracy": 0.9080952380952381,
       "f1_macro": 0.9082316732056342,
-      "ms_par_evenement": 0.0684634761931929,
+      "ms_par_evenement": 0.06702576190166708,
       "accuracy_bruit_x3": 0.7942857142857143
     },
     "B - Spectre FFT + forêt aléatoire": {
       "accuracy": 0.9771428571428571,
       "f1_macro": 0.9771483275846213,
-      "ms_par_evenement": 0.09049638095478128,
+      "ms_par_evenement": 0.07542142856566768,
       "accuracy_bruit_x3": 0.8609523809523809
     },
     "C - Ondelettes + GAF + CNN": {
       "accuracy": 0.9742857142857143,
       "f1_macro": 0.9742326746244985,
-      "ms_par_evenement": 0.3406316190445241,
+      "ms_par_evenement": 0.33709319047851577,
       "accuracy_bruit_x3": 0.8819047619047619
     },
     "D - VoltEye : fusion CNN GAF + spectre FFT": {
       "accuracy": 0.9785714285714285,
       "f1_macro": 0.9785163292061135,
-      "ms_par_evenement": 0.4543757619034122,
+      "ms_par_evenement": 0.4191560952416954,
       "accuracy_bruit_x3": 0.8847619047619047
     }
   },

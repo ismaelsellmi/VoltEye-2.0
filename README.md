@@ -26,10 +26,10 @@ et des modifications d'équipements souvent certifiés. **Ce qui n'est pas mesur
 
 | Fonction | Méthode IA | Résultat sur données de test |
 |---|---|---|
-| **Reconnaître** les machines | Ondelettes + harmoniques → images GAF → CNN, fusionné avec une forêt aléatoire sur le spectre | **98,1 %** d'exactitude (7 types de machines) |
-| **Désagréger** le signal unique | Détection d'événements + reconnaissance | **99,4 %** de précision énergétique, F1 détection 0,99 |
-| **Prévoir** la consommation à J+1 | Gradient boosting (calendrier, météo, retards ≥ 24 h) | **MAPE 7,5 %** (baseline : 12,3 %) |
-| **Détecter** les gaspillages | Modèle de consommation attendue + score robuste des résidus | **F1 0,88**, précision 0,98 (baseline z-score : F1 0,17) |
+| **Reconnaître** les machines | Ondelettes + harmoniques → images GAF → CNN, fusionné avec une forêt aléatoire sur le spectre | **97,9 %** d'exactitude (7 types de machines) |
+| **Désagréger** le signal unique | Détection d'événements + reconnaissance | **99,2 %** de précision énergétique, F1 détection 0,99 (0,96 en scénario dense) |
+| **Prévoir** la consommation à J+1 | Gradient boosting (calendrier, météo, retards ≥ 24 h) | **MAPE 7,7 %** (baseline : 12,3 %) |
+| **Détecter** les gaspillages | Consommation attendue réentraînée chaque mois + score robuste des résidus | **F1 0,82** sur 4 mois jamais vus, précision 0,87 (baseline z-score : F1 0,18) |
 | **Anticiper** les pannes | Dérive de la distorsion harmonique (THD), score de santé | panne anticipée **27 jours** avant, 0 fausse alerte |
 | **Optimiser** le planning | Programme linéaire en nombres entiers (HiGHS) sur le tarif horaire | **-12,6 %** sur la facture des jours ouvrés, -77 kW de pointe |
 

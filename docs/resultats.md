@@ -7,10 +7,10 @@ Toutes les valeurs proviennent de `artifacts/*.json`, produits par `python -m vo
 
 | Approche | Exactitude | F1 macro | Exactitude bruit x3 | ms / événement |
 |---|---|---|---|---|
-| A. Mesures classiques (P, Q, S, FP, I, THD) + forêt aléatoire | 90,8 % | 0,908 | 79,4 % | 0,06 |
-| B. Spectre FFT + forêt aléatoire | 97,8 % | 0,978 | 86,2 % | 0,07 |
-| C. Ondelettes + GAF + CNN | 97,4 % | 0,974 | 88,5 % | 0,32 |
-| **D. VoltEye : fusion C + B** | **98,1 %** | **0,981** | **89,0 %** | 0,41 |
+| A. Mesures classiques (P, Q, S, FP, I, THD) + forêt aléatoire | 90,8 % | 0,908 | 79,4 % | 0,07 |
+| B. Spectre FFT + forêt aléatoire | 97,7 % | 0,977 | 86,1 % | 0,08 |
+| C. Ondelettes + GAF + CNN | 97,4 % | 0,974 | 88,2 % | 0,34 |
+| **D. VoltEye : fusion C + B** | **97,9 %** | **0,979** | **88,5 %** | 0,42 |
 
 Lecture : les mesures classiques ne suffisent pas (des machines de même puissance se confondent). Le
 spectre harmonique apporte l'essentiel. Le CNN sur images GAF est **plus robuste au bruit** et la fusion des
@@ -22,30 +22,41 @@ convoyeur : deux moteurs aux signatures proches) à 1,00.
 | Indicateur | Valeur |
 |---|---|
 | Événements détectés / réels | 190 / 194 (précision 1,00, rappel 0,98, F1 0,99) |
-| Événements correctement attribués | 98,4 % |
-| Précision énergétique (1 − Σ|écart| / 2·Σénergie) | 99,4 % |
-| Erreur d'énergie par machine | de 0 % à 5,1 % |
+| Événements correctement attribués | 98,9 % |
+| Précision énergétique (1 − Σ|écart| / 2·Σénergie) | 99,2 % |
+| Erreur d'énergie par machine | de 0 % à 6,3 % |
+
+**Scénario dense** (1 h, cycles cinq fois plus courts, événements espacés d'une seconde seulement :
+241 événements dont 37 à moins de 4 s d'écart) : détection F1 0,961, reconnaissance 96,8 %.
 
 ## 3. Prévision J+1 (60 derniers jours, jamais vus à l'entraînement)
 
 | Modèle | MAE (kWh/h) | RMSE | MAPE (heures actives) |
 |---|---|---|---|
-| **VoltEye : gradient boosting** | **1,51** | **2,20** | **7,5 %** |
+| **VoltEye : gradient boosting** | **1,52** | **2,22** | **7,7 %** |
 | Baseline : même heure la semaine précédente | 3,82 | 10,57 | 12,3 % |
 | Baseline : même heure la veille | 15,17 | 30,35 | 55,4 % |
 
-## 4. Détection d'anomalies (2 555 jours-machine)
+## 4. Détection d'anomalies : backtest glissant sur 4 mois jamais vus
 
-| Approche | Précision | Rappel | F1 |
-|---|---|---|---|
-| **VoltEye : résidus + score robuste (MAD)** | **0,98** | **0,79** | **0,88** |
-| Variante : résidus + Isolation Forest | 0,52 | 0,54 | 0,53 |
-| Baseline : z-score de l'énergie journalière | 0,14 | 0,24 | 0,17 |
+Protocole temporel, sans aucune information du futur :
 
-Rappel par type : veille 94 %, pic 90 %, panne 100 %, éclairage du week-end 100 %, fuite d'air 64 % (les
-premiers jours d'une fuite naissante, encore faible, ne sont pas signalés : la fuite est détectée
-pendant sa montée). Gaspillage détecté : 2 790 kWh, soit environ 830 TND et 1,4 t de CO₂ sur un an pour un
-seul site.
+- **Rodage** (nov. 2025 → janv. 2026) : premiers modèles, aucune alerte notée.
+- **Réentraînement mensuel** : chaque mois est prédit par un modèle entraîné sur les mois précédents
+  uniquement ; le score robuste est normalisé sur les 60 jours précédents.
+- **Validation** (fév. → juin 2026) : le seuil de chaque méthode est réglé ici.
+- **Test** (juil. → oct. 2026, 861 jours-machine dont 26 anormaux) : score publié, période jamais
+  utilisée pour régler quoi que ce soit.
+
+| Approche (test juil.-oct.) | Seuil | Précision | Rappel | F1 |
+|---|---|---|---|---|
+| **VoltEye : résidus + score robuste (MAD)** | 5,75 | **0,87** | **0,77** | **0,82** |
+| Variante : résidus + Isolation Forest | 0,62 | 0,36 | 0,50 | 0,42 |
+| Baseline : z-score de l'énergie journalière | 4,00 | 0,22 | 0,15 | 0,18 |
+
+Rappel par type (février à octobre) : veille 100 %, panne 100 %, éclairage du week-end 100 %, pic 75 %,
+fuite d'air 73 % (la fuite est signalée pendant sa montée en puissance). Gaspillage détecté de février à
+octobre : 3 080 kWh, soit environ 910 TND et 1,5 t de CO₂ pour un seul site.
 
 ## 5. Maintenance prédictive
 
@@ -61,3 +72,8 @@ panne** (18/05/2026), sans aucune fausse alerte sur les 6 autres machines pendan
 | Gain annuel estimé (290 jours ouvrés) | ≈ 16 000 TND pour le site de référence |
 
 Référence : toutes les tâches flexibles sont lancées en début de poste (7 h), la pratique la plus courante.
+
+Seconde référence, **opérateur averti** : chaque tâche démarre à l'heure la moins chère de sa fenêtre selon
+le tarif, sans coordination entre tâches. Face à lui, l'optimiseur gagne encore 3,9 TND par jour (-1,1 %)
+et 6,5 kW de pointe : c'est l'apport propre de la coordination des tâches sous contrainte de puissance,
+qui prend toute son ampleur à l'échelle de plusieurs sites (module VoltEye Grid).

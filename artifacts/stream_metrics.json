@@ -93,5 +93,16 @@
       "energie_estimee_kWh": 22.664755285974937,
       "erreur_relative": 0.00024526956158859876
     }
+  },
+  "scenario_dense": {
+    "evenements_reels": 241,
+    "evenements_detectes": 186,
+    "detection_precision": 1.0,
+    "detection_rappel": 0.9253112033195021,
+    "detection_f1": 0.9612068965517242,
+    "classification_exactitude": 0.967741935483871,
+    "precision_energetique": 0.9055986609270836,
+    "evenements_a_moins_de_4_s": 37,
+    "duree_min": 60
   }
 }

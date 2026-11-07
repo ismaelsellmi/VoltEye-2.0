@@ -1,20 +1,62 @@
 {
   "models": {
     "VoltEye - résidus + score robuste (MAD)": {
-      "precision": 0.9636363636363636,
-      "rappel": 0.7910447761194029,
-      "f1": 0.8688524590163934
+      "precision": 0.8695652173913043,
+      "rappel": 0.7692307692307693,
+      "f1": 0.8163265306122449
     },
     "Variante - résidus + Isolation Forest": {
-      "precision": 0.5217391304347826,
-      "rappel": 0.5373134328358209,
-      "f1": 0.5294117647058824
+      "precision": 0.3611111111111111,
+      "rappel": 0.5,
+      "f1": 0.41935483870967744
     },
     "Baseline - z-score énergie journalière": {
-      "precision": 0.13559322033898305,
-      "rappel": 0.23880597014925373,
-      "f1": 0.17297297297297298
+      "precision": 0.2222222222222222,
+      "rappel": 0.15384615384615385,
+      "f1": 0.18181818181818182
     }
+  },
+  "validation": {
+    "VoltEye - résidus + score robuste (MAD)": {
+      "precision": 0.54,
+      "rappel": 0.8709677419354839,
+      "f1": 0.6666666666666666
+    },
+    "Variante - résidus + Isolation Forest": {
+      "precision": 0.4358974358974359,
+      "rappel": 0.5483870967741935,
+      "f1": 0.4857142857142857
+    },
+    "Baseline - z-score énergie journalière": {
+      "precision": 0.25,
+      "rappel": 0.5483870967741935,
+      "f1": 0.3434343434343434
+    }
+  },
+  "seuils": {
+    "VoltEye - résidus + score robuste (MAD)": 5.75,
+    "Variante - résidus + Isolation Forest": 0.6200000000000002,
+    "Baseline - z-score énergie journalière": 4.0
+  },
+  "protocole": {
+    "rodage": [
+      "2025-11-01",
+      "2026-02-01"
+    ],
+    "validation": [
+      "2026-02-01",
+      "2026-07-01"
+    ],
+    "test": [
+      "2026-07-01",
+      "2026-11-01"
+    ],
+    "reentrainement": "mensuel, sur le passé uniquement",
+    "normalisation": "médiane et MAD des 60 jours précédents",
+    "jours_test": 861,
+    "jours_anormaux_test": 26,
+    "jours_validation": 1008,
+    "jours_anormaux_validation": 31
   },
   "rappel_par_type": {
     "eclairage_weekend": {
@@ -25,9 +67,9 @@
     },
     "fuite_air": {
       "jours": 33,
-      "rappel_volteye": 0.6363636363636364,
-      "rappel_iforest": 0.30303030303030304,
-      "rappel_baseline": 0.18181818181818182
+      "rappel_volteye": 0.7272727272727273,
+      "rappel_iforest": 0.45454545454545453,
+      "rappel_baseline": 0.3939393939393939
     },
     "panne": {
       "jours": 2,
@@ -36,22 +78,23 @@
       "rappel_baseline": 1.0
     },
     "pic": {
-      "jours": 10,
-      "rappel_volteye": 0.9,
-      "rappel_iforest": 1.0,
-      "rappel_baseline": 0.1
+      "jours": 8,
+      "rappel_volteye": 0.75,
+      "rappel_iforest": 0.875,
+      "rappel_baseline": 0.375
     },
     "veille": {
       "jours": 18,
-      "rappel_volteye": 0.9444444444444444,
-      "rappel_iforest": 0.5555555555555556,
-      "rappel_baseline": 0.16666666666666666
+      "rappel_volteye": 1.0,
+      "rappel_iforest": 0.3333333333333333,
+      "rappel_baseline": 0.2222222222222222
     }
   },
   "impact_anomalies_detectees": {
-    "kWh_gaspilles_detectes": 2782.750140647522,
-    "TND": 829.0611140848757,
-    "kg_CO2": 1391.375070323761
+    "kWh_gaspilles_detectes": 3083.5293698032356,
+    "TND": 910.214242408712,
+    "kg_CO2": 1541.7646849016178,
+    "periode": "journées notées, fév.-oct. 2026"
   },
   "maintenance": {
     "four": {
