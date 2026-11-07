@@ -70,6 +70,12 @@ def voltEye_grid() -> str:
 
 
 @mcp.tool()
+def solaire() -> str:
+    """Solaire en toiture : production, autoconsommation, économies, CO₂ évité et effet sur la pointe d'été."""
+    return _json(tools.solaire())
+
+
+@mcp.tool()
 def evaluation() -> str:
     """Résultats d'évaluation des modèles d'IA de VoltEye."""
     return _json(tools.evaluation())

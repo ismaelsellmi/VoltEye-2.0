@@ -125,6 +125,8 @@ def route(question):
         return "anomalies", {"machine": m or "compresseur", "mois": month}
     if m and month and any(w in q for w in ("cout", "alerte", "anomal", "gaspill", "veille", "combien")):
         return "anomalies", {"machine": m, "mois": month}
+    if any(w in q for w in ("solaire", "photovolta", "panneau", " pv", "toiture")):
+        return "solaire", {}
     if any(w in q for w in ("grid", "steg", "delestage", "mw", "megawatt", "pointe d'ete", "effac", "reseau")):
         return "voltEye_grid", {}
     if any(w in q for w in ("hors production", "la nuit", "week-end", "weekend", "veille")):
@@ -178,6 +180,12 @@ def render(name, r):
         return (f"Le planning optimisé réduit la facture des jours ouvrés de {_fr(r['gain_moyen_%'], 1)} % ({_fr(r['gain_moyen_TND_par_jour'], 1)} TND par jour, "
                 f"≈ {_fr(r['gain_annuel_estime_TND'])} TND par an) et la pointe de {_fr(r['pointe_evitee_kW'])} kW. Face à un opérateur qui suit déjà "
                 f"le tarif, il gagne encore {_fr(r['face_a_un_operateur_averti_%'], 1)} %.")
+    if name == "solaire":
+        a, b = r["achat_reseau_en_pointe_ete_kW"]
+        return (f"Les {_fr(r['puissance_kWc'])} kWc en toiture produiraient {_fr(r['production_MWh_an'])} MWh par an "
+                f"({_fr(r['productible_kWh_par_kWc'])} kWh/kWc), autoconsommés à {_fr(r['autoconsommation_%'])} % : ≈ {_fr(r['economie_TND_an'])} TND "
+                f"économisés et {_fr(r['co2_evite_t_an'], 1)} t de CO₂ évitées par an. En pointe tarifaire d'été, l'achat au réseau passe "
+                f"de {_fr(a)} kW à {_fr(b)} kW en moyenne.")
     if name == "evaluation":
         return (f"Reconnaissance des machines : {_fr(r['reconnaissance_exactitude_%'], 1)} %. Détection des gaspillages sur 4 mois jamais vus : "
                 f"F1 {_fr(r['anomalies_F1_test'], 2)} (référence {_fr(r['anomalies_F1_reference'], 2)}). Prévision : {_fr(r['prevision_erreur_%'], 1)} % d'erreur."

@@ -189,6 +189,19 @@ def voltEye_grid():
             "source": "module VoltEye Grid (prévision J+1 par zone et programme linéaire)"}
 
 
+def solaire():
+    """Solaire en toiture du site : production annuelle, autoconsommation, économies, CO₂ évité, effet sur la pointe d'été."""
+    s = db.scalar("SELECT data FROM metric WHERE name = 'solaire'") or {}
+    if not s:
+        raise ValueError("résultats solaires absents")
+    return {"puissance_kWc": s["installation"]["kWc"], "production_MWh_an": _r(s["production_MWh_an"], 0),
+            "productible_kWh_par_kWc": _r(s["productible_kWh_kWc"], 0), "autoconsommation_%": _r(s["autoconsommation_%"], 0),
+            "part_des_besoins_couverte_%": _r(s["autoproduction_%"], 0), "economie_TND_an": _r(s["economie_TND_an"], 0),
+            "co2_evite_t_an": _r(s["co2_evite_t_an"], 1),
+            "achat_reseau_en_pointe_ete_kW": [_r(s["pointe_tarifaire_ete"]["achat_moyen_sans_pv_kW"], 0), _r(s["pointe_tarifaire_ete"]["achat_moyen_avec_pv_kW"], 0)],
+            "source": "modèle photovoltaïque VoltEye (position du soleil, ciel clair, clarté mensuelle de Tunis)"}
+
+
 def evaluation():
     """Résultats d'évaluation des modèles d'IA (données jamais vues, comparés à des références simples)."""
     e = {r["name"]: r["data"] for r in db.rows("SELECT name, data FROM metric WHERE name IN ('reconnaissance','anomalies','prevision','hipe')")}
@@ -216,7 +229,7 @@ def requete_sql(requete: str):
 
 
 TOOLS = {f.__name__: f for f in [indicateurs, hors_production, anomalies, sante, prevision, planning, voltEye_grid,
-                                  evaluation, recherche_documentation, requete_sql]}
+                                  solaire, evaluation, recherche_documentation, requete_sql]}
 
 _machine = {"type": "string", "description": "machine : four, compresseur, cnc, convoyeur, eclairage, soudage ou cvc (climatisation)"}
 SPECS = [
@@ -232,6 +245,7 @@ SPECS = [
     {"name": "planning", "description": planning.__doc__,
      "input_schema": {"type": "object", "properties": {"jour": {"type": "string", "description": "date AAAA-MM-JJ d'un jour ouvré optimisé"}}}},
     {"name": "voltEye_grid", "description": voltEye_grid.__doc__, "input_schema": {"type": "object", "properties": {}}},
+    {"name": "solaire", "description": solaire.__doc__, "input_schema": {"type": "object", "properties": {}}},
     {"name": "evaluation", "description": evaluation.__doc__, "input_schema": {"type": "object", "properties": {}}},
     {"name": "recherche_documentation", "description": recherche_documentation.__doc__,
      "input_schema": {"type": "object", "properties": {"question": {"type": "string"}}, "required": ["question"]}},

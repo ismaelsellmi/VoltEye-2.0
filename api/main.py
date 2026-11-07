@@ -218,7 +218,7 @@ def grid_day(jour: date):
 
 @app.get("/api/evaluation", tags=["évaluation"])
 def evaluation():
-    return {r["name"]: r["data"] for r in db.rows("SELECT name, data FROM metric WHERE name NOT IN ('zones', 'assistant', 'assistant_llm')")}
+    return {r["name"]: r["data"] for r in db.rows("SELECT name, data FROM metric WHERE name NOT IN ('zones', 'assistant', 'assistant_llm', 'solaire')")}
 
 
 # --- Temps réel ---------------------------------------------------------------------------
@@ -255,6 +255,12 @@ def gaf(req: WaveRequest):
     return {"sequences": {k: v.round(4).tolist() for k, v in seq.items()},
             "image": [gasf(seq[k]).round(3).tolist() for k in ("approximation", "detail", "harmoniques")],
             "harmoniques": (h / h[0] if h[0] > 1e-9 else h)[:15].round(4).tolist()}
+
+
+@app.get("/api/solaire", tags=["prévision et planning"])
+def solar():
+    """Solaire en toiture : production, autoconsommation, charge nette et effet sur la pointe d'été."""
+    return metric("solaire")
 
 
 # --- IA avancée -------------------------------------------------------------------------
