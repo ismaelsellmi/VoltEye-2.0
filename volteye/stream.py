@@ -32,8 +32,9 @@ def build_site(rng):
     return [sample_instance(m, rng, SITE_NAMES[m]) for m in CLASSES]
 
 
-def simulate(site, seconds, rng, min_gap=4):
-    """États (charge 0..1) de chaque machine seconde par seconde, sans événements simultanés."""
+def simulate(site, seconds, rng, min_gap=4, cycle_scale=1.0):
+    """États (charge 0..1) de chaque machine seconde par seconde, sans événements simultanés.
+    `cycle_scale` < 1 raccourcit les cycles marche / arrêt (scénario dense)."""
     n = len(site)
     load = np.zeros((seconds, n))
     next_change = [int(rng.integers(0, 600)) for _ in range(n)]
@@ -48,10 +49,10 @@ def simulate(site, seconds, rng, min_gap=4):
                 on, off = CYCLES[inst.mtype]
                 if state[k] > 0:
                     state[k] = 0.0
-                    next_change[k] = t + int(60 * rng.uniform(*off))
+                    next_change[k] = t + max(int(60 * cycle_scale * rng.uniform(*off)), 1)
                 else:
                     state[k] = float(rng.uniform(0.5, 1.0))
-                    next_change[k] = t + int(60 * rng.uniform(*on))
+                    next_change[k] = t + max(int(60 * cycle_scale * rng.uniform(*on)), 1)
                 last_event = t
         load[t] = state
     return load
@@ -144,6 +145,25 @@ def evaluate(load, site, records, est_power, tol=3):
     }
 
 
+def dense_scenario(recognizer, minutes=60, log=print):
+    """Scénario dense : cycles cinq fois plus courts et événements espacés d'une seconde seulement."""
+    rng = np.random.default_rng(C.SEED + 11)
+    site = build_site(rng)
+    load = simulate(site, minutes * 60, rng, min_gap=1, cycle_scale=0.2)
+    df = measure_stream(site, load, rng)
+    records, _, est_power = disaggregate(site, load, df, recognizer, rng)
+    m = evaluate(load, site, records, est_power)
+    starts = [t for t in range(1, len(load)) if np.any(np.abs(load[t] - load[t - 1]) > 1e-9)]
+    gaps = np.diff(starts)
+    m["evenements_a_moins_de_4_s"] = int((gaps < 4).sum())
+    m["duree_min"] = minutes
+    m.pop("par_machine")
+    log(f"  scénario dense ({minutes} min, {m['evenements_reels']} événements dont "
+        f"{m['evenements_a_moins_de_4_s']} à moins de 4 s) : détection F1 {m['detection_f1']:.3f}, "
+        f"classification {m['classification_exactitude']:.3f}")
+    return m
+
+
 def run(recognizer, hours=4, out_dir=C.ARTIFACTS, log=print):
     rng = np.random.default_rng(C.SEED + 1)
     site = build_site(rng)
@@ -162,5 +182,6 @@ def run(recognizer, hours=4, out_dir=C.ARTIFACTS, log=print):
     site_info = [{"nom": i.name, "type": i.mtype, "libelle": MACHINE_TYPES[i.mtype].label,
                   "p_nominale_kW": i.p_rated, "fp": i.pf} for i in site]
     (out_dir / "stream_events.json").write_text(json.dumps(records, ensure_ascii=False), encoding="utf-8")
+    metrics["scenario_dense"] = dense_scenario(recognizer, log=log)
     (out_dir / "stream_metrics.json").write_text(json.dumps({"site": site_info, **metrics}, indent=2, ensure_ascii=False), encoding="utf-8")
     return metrics
