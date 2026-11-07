@@ -1,0 +1,16 @@
+# API VoltEye (FastAPI, TimescaleDB, MQTT) : versions testées
+fastapi==0.115.13
+uvicorn[standard]==0.34.3
+SQLAlchemy==2.0.43
+psycopg[binary]==3.3.8
+paho-mqtt==2.2.0
+pydantic==2.11.7
+httpx==0.28.1
+numpy==1.26.4
+pandas==2.3.0
+pyarrow==20.0.0
+scikit-learn==1.7.2
+joblib==1.5.1
+PuLP==3.3.2
+highspy==1.15.1
+PyWavelets==1.8.0
