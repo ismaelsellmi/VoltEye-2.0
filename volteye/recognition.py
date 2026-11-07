@@ -11,7 +11,9 @@ Quatre approches comparées sur les mêmes données :
 """
 import json
 import time
+from pathlib import Path
 
+import joblib
 import numpy as np
 import torch
 import torch.nn as nn
@@ -101,14 +103,21 @@ class Recognizer:
         return self.predict_proba(waves).argmax(1)
 
     def save(self, path):
-        torch.save({"state": self.model.state_dict(), "mu": self.mu, "sd": self.sd, "rf": self.rf}, path)
+        """Poids du CNN au format tenseurs seuls ; la forêt aléatoire est enregistrée à part (joblib)."""
+        path = Path(path)
+        torch.save({"state": self.model.state_dict(), "mu": torch.tensor(self.mu), "sd": torch.tensor(self.sd)}, path)
+        if self.rf is not None:
+            joblib.dump(self.rf, path.with_suffix(".rf.joblib"))
 
     @classmethod
     def load(cls, path):
-        ck = torch.load(path, weights_only=False)
+        path = Path(path)
+        ck = torch.load(path, weights_only=True)
         model = GafCNN()
         model.load_state_dict(ck["state"])
-        return cls(model, ck["mu"], ck["sd"], ck.get("rf"))
+        rf_path = path.with_suffix(".rf.joblib")
+        rf = joblib.load(rf_path) if rf_path.exists() else None
+        return cls(model, ck["mu"].numpy(), ck["sd"].numpy(), rf)
 
 
 def train_cnn(w_tr, y_tr, w_va, y_va, epochs=25, seed=C.SEED, log=print):
@@ -118,7 +127,7 @@ def train_cnn(w_tr, y_tr, w_va, y_va, epochs=25, seed=C.SEED, log=print):
     rec = Recognizer(GafCNN(), mu, sd)
     x_img, x_sc = rec._tensors(w_tr)
     v_img, v_sc = rec._tensors(w_va)
-    y = torch.tensor(y_tr)
+    y = torch.tensor(y_tr, dtype=torch.long)   # int32 par défaut sous Windows avec numpy < 2
     model = rec.model
     opt = torch.optim.Adam(model.parameters(), lr=2e-3, weight_decay=1e-4)
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, epochs)
