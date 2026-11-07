@@ -46,3 +46,22 @@ jobs:
         run: pip install -r requirements-server.txt pytest==9.0.3
       - name: Tests de l'API (TimescaleDB)
         run: python -m pytest -q tests/test_api.py
+
+  web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Dépendances
+        run: npm ci
+      - name: Vérification du code
+        run: npx eslint src
+      - name: Construction de l'application (PWA)
+        run: npm run build

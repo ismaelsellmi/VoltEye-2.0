@@ -86,15 +86,24 @@ python -m pytest tests
 
 ### Plateforme complète (Docker)
 
-Base TimescaleDB, broker MQTT, API et passerelle edge simulée, en une commande :
+Base TimescaleDB, broker MQTT, API, passerelle edge simulée et application web, en une commande :
 
 ```bash
 docker compose up --build
 ```
 
+- **Application VoltEye (PWA)** : http://localhost:8080, installable sur téléphone et ordinateur
 - API et documentation interactive : http://localhost:8000/docs
 - WebSocket du direct : `ws://localhost:8000/ws/direct`
 - Rejeu d'une journée réelle de l'usine HIPE en plus : `docker compose --profile hipe up --build`
+
+Développement de l'application web (rechargement à chaud, API sur le port 8000) :
+
+```bash
+cd web
+npm install
+npm run dev
+```
 
 La base est remplie automatiquement au premier démarrage à partir de `artifacts/`. Validation sur données
 réelles : `python scripts/telecharger_hipe.py` puis `python -m volteye.pipeline`.
