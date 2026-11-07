@@ -28,10 +28,11 @@ et des modifications d'équipements souvent certifiés. **Ce qui n'est pas mesur
 |---|---|---|
 | **Reconnaître** les machines | Ondelettes + harmoniques → images GAF → CNN, fusionné avec une forêt aléatoire sur le spectre | **97,9 %** d'exactitude (7 types de machines) |
 | **Désagréger** le signal unique | Détection d'événements + reconnaissance | **99,2 %** de précision énergétique, F1 détection 0,99 (0,96 en scénario dense) |
-| **Prévoir** la consommation à J+1 | Gradient boosting (calendrier, météo, retards ≥ 24 h) | **MAPE 7,7 %** (baseline : 12,3 %) |
+| **Prévoir** la consommation à J+1 | Gradient boosting (calendrier, météo, retards ≥ 24 h), fourchette conforme P10-P90, explications SHAP | **MAPE 7,7 %** (baseline : 12,3 %), fourchette juste pour 88 % des heures |
 | **Détecter** les gaspillages | Consommation attendue réentraînée chaque mois + score robuste des résidus | **F1 0,82** sur 4 mois jamais vus, précision 0,87 (baseline z-score : F1 0,18) |
 | **Anticiper** les pannes | Dérive de la distorsion harmonique (THD), score de santé | panne anticipée **27 jours** avant, 0 fausse alerte |
 | **Optimiser** le planning | Programme linéaire en nombres entiers (HiGHS) sur le tarif horaire | **-12,6 %** sur la facture des jours ouvrés, -77 kW de pointe |
+| **Expliquer** et **répondre** | Grad-CAM sur les images GAF ; assistant LLM outillé (10 outils VoltEye, RAG pgvector) ; serveur MCP | **25/25** réponses justes sur le jeu d'évaluation de l'assistant |
 | **Effacer** la pointe du réseau (VoltEye Grid) | Prévision J+1 de 10 zones + programme linéaire de répartition des démarrages | **-10,3 MW** sur la pointe agrégée d'été (-10,9 %), -6,5 MW face à la réponse au tarif seul |
 
 Toutes les métriques sont mesurées sur des données jamais vues à l'entraînement et comparées à des
@@ -103,6 +104,27 @@ Développement de l'application web (rechargement à chaud, API sur le port 8000
 cd web
 npm install
 npm run dev
+```
+
+### Assistant énergie et serveur MCP
+
+L'assistant de l'application répond aux questions en langage naturel en appelant les outils VoltEye
+(anomalies, santé, prévision, planning, VoltEye Grid, documentation, SQL en lecture seule). Avec une clé
+d'API Anthropic dans `.env` (voir `.env.example`), il fonctionne en mode LLM ; sans clé, un aiguillage hors
+ligne appelle les mêmes outils. Évaluation sur 25 questions : `python -m agent.evaluate`.
+
+Les mêmes outils sont ouverts à tout assistant IA compatible MCP (Model Context Protocol) :
+
+```bash
+python -m agent.mcp_server                # transport stdio
+docker compose --profile mcp up mcp       # transport HTTP sur http://localhost:8765/mcp
+```
+
+Configuration type d'un client MCP de bureau :
+
+```json
+{ "mcpServers": { "volteye": { "command": "python", "args": ["-m", "agent.mcp_server"],
+  "env": { "DATABASE_URL": "postgresql+psycopg://volteye:volteye@127.0.0.1:55432/volteye" } } } }
 ```
 
 La base est remplie automatiquement au premier démarrage à partir de `artifacts/`. Validation sur données

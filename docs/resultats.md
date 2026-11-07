@@ -124,3 +124,24 @@ chargés de l'été 2026.
 **-10,3 MW** de pointe (-10,9 %) face à la pratique actuelle et **-6,5 MW** (-7,2 %) face à une réponse au
 tarif non coordonnée, à coût énergétique égal pour les usines. 60 MWh par jour sont déplacés : la même
 énergie, consommée à d'autres heures.
+
+## 9. IA avancée : fourchettes, explicabilité, assistant
+
+**Prévision avec fourchette calibrée.** Deux modèles quantiles (10 % et 90 %) sont élargis par régression
+quantile conformalisée (Romano et al., 2019), calibrée sur les 45 derniers jours d'apprentissage, séparément
+pour les heures de production et les autres. Sur la période de test : **88,1 %** des heures réelles tombent
+dans la fourchette P10-P90 (cible 80 %), largeur moyenne 5,2 kWh.
+
+**Explications SHAP de la prévision.** Poids moyen des informations (valeurs SHAP, kWh) : planning de
+production 32,6 ; température prévue 1,9 ; consommation de la veille à la même heure 0,36 ; moyenne de la
+veille 0,32. Chaque heure prévue a son explication détaillée dans l'application (page Prévision).
+
+**Grad-CAM sur les images GAF.** Pour chaque événement reconnu, la passerelle calcule la carte Grad-CAM du
+CNN (dernier bloc convolutif) : elle montre quelles zones de l'image, donc quelles paires d'instants ou de
+rangs harmoniques, ont fait décider le réseau.
+
+**Assistant énergie.** Dix outils VoltEye (indicateurs, consommation hors production, anomalies, santé,
+prévision, planning, VoltEye Grid, évaluation, documentation, SQL en lecture seule) ; documentation indexée
+dans pgvector (modèle multilingue local, recherche hybride sémantique et plein texte). Évaluation sur 25
+questions dont la réponse est calculée par les outils : **25/25 réponses justes** et 25/25 bons outils en
+mode hors ligne (`python -m agent.evaluate`). Les mêmes outils sont exposés par un serveur MCP.
