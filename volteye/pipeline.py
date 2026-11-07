@@ -6,7 +6,7 @@ import json
 import sys
 import time
 
-from . import anomaly, city, config as C, forecasting, history, optimization, recognition, stream
+from . import anomaly, city, config as C, forecasting, hipe, history, optimization, recognition, stream
 
 
 def main():
@@ -25,6 +25,7 @@ def main():
     opt = optimization.run(fc)
     am = json.loads((C.ARTIFACTS / "anomaly_metrics.json").read_text(encoding="utf-8"))
     city.run(hist, am, opt)
+    hipe.run()                     # validation sur données réelles (si l'archive HIPE est présente)
     try:
         from . import figures
         figures.main()
