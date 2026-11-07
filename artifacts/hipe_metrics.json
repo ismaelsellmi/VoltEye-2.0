@@ -1,0 +1,199 @@
+{
+  "source": "HIPE (KIT), semaine du 23 au 29/10/2017, pas de 5 s, licence CC BY 4.0",
+  "detection": {
+    "evenements_site": 3782,
+    "evenements_machines_suivies": 1792,
+    "rappel": 0.8186383928571429,
+    "par_machine": {
+      "HighTemperatureOven": {
+        "evenements": 29,
+        "rappel": 0.7586206896551724
+      },
+      "SolderingOven": {
+        "evenements": 1739,
+        "rappel": 0.8182863714778609
+      },
+      "VacuumPump1": {
+        "evenements": 20,
+        "rappel": 0.95
+      },
+      "VacuumPump2": {
+        "evenements": 4,
+        "rappel": 0.75
+      }
+    }
+  },
+  "reconnaissance": {
+    "classes": {
+      "HighTemperatureOven": {
+        "apprentissage": 15,
+        "test": 7
+      },
+      "SolderingOven": {
+        "apprentissage": 940,
+        "test": 403
+      },
+      "VacuumPump1": {
+        "apprentissage": 12,
+        "test": 6
+      },
+      "autre": {
+        "apprentissage": 1679,
+        "test": 720
+      }
+    },
+    "A - ΔP, ΔQ + forêt aléatoire": {
+      "exactitude": 0.8723591549295775,
+      "f1_macro": 0.43214968040829804,
+      "f1_par_classe": {
+        "HighTemperatureOven": 0.0,
+        "SolderingOven": 0.821,
+        "VacuumPump1": 0.0,
+        "autre": 0.908
+      }
+    },
+    "VoltEye - ΔP, ΔQ + harmoniques + forêt aléatoire": {
+      "exactitude": 0.8855633802816901,
+      "f1_macro": 0.43772473299836145,
+      "f1_par_classe": {
+        "HighTemperatureOven": 0.0,
+        "SolderingOven": 0.833,
+        "VacuumPump1": 0.0,
+        "autre": 0.918
+      }
+    }
+  },
+  "signatures": {
+    "machines": {
+      "ChipSaw": {
+        "apprentissage": 2100,
+        "test": 900
+      },
+      "HighTemperatureOven": {
+        "apprentissage": 1792,
+        "test": 768
+      },
+      "PickAndPlaceUnit": {
+        "apprentissage": 2100,
+        "test": 900
+      },
+      "ScreenPrinter": {
+        "apprentissage": 2100,
+        "test": 900
+      },
+      "SolderingOven": {
+        "apprentissage": 2100,
+        "test": 900
+      },
+      "VacuumPump1": {
+        "apprentissage": 2100,
+        "test": 900
+      },
+      "VacuumPump2": {
+        "apprentissage": 2100,
+        "test": 900
+      }
+    },
+    "A - P, Q, facteur de puissance + forêt aléatoire": {
+      "exactitude": 0.9940012970168612,
+      "f1_macro": 0.994022372126811,
+      "f1_par_classe": {
+        "ChipSaw": 0.999,
+        "HighTemperatureOven": 0.995,
+        "PickAndPlaceUnit": 0.992,
+        "ScreenPrinter": 0.999,
+        "SolderingOven": 0.988,
+        "VacuumPump1": 0.992,
+        "VacuumPump2": 0.992
+      }
+    },
+    "VoltEye - + THD et harmoniques + forêt aléatoire": {
+      "exactitude": 0.999189364461738,
+      "f1_macro": 0.9991384032818242,
+      "f1_par_classe": {
+        "ChipSaw": 0.999,
+        "HighTemperatureOven": 0.997,
+        "PickAndPlaceUnit": 1.0,
+        "ScreenPrinter": 1.0,
+        "SolderingOven": 0.998,
+        "VacuumPump1": 1.0,
+        "VacuumPump2": 1.0
+      }
+    }
+  },
+  "prevision_1h": {
+    "VoltEye - gradient boosting": {
+      "MAE_kW": 2.7796143281927654,
+      "MAPE_%": 14.757967821460271
+    },
+    "Baseline - valeur d'il y a 1 h": {
+      "MAE_kW": 2.8665850162506104,
+      "MAPE_%": 18.7096044421196
+    },
+    "Baseline - même heure la veille": {
+      "MAE_kW": 3.054462432861328,
+      "MAPE_%": 17.152774333953857
+    },
+    "points_test": 192,
+    "periode_test": [
+      "2017-10-26",
+      "2017-10-27"
+    ]
+  },
+  "hors_production": {
+    "MainTerminal": {
+      "kWh_semaine": 2705.331423611111,
+      "kWh_hors_production": 780.6203125,
+      "part_hors_production": 0.2885488652839503
+    },
+    "ChipSaw": {
+      "kWh_semaine": 7.170492214626736,
+      "kWh_hors_production": 0.0,
+      "part_hors_production": 0.0
+    },
+    "HighTemperatureOven": {
+      "kWh_semaine": 12.419493272569444,
+      "kWh_hors_production": 0.0,
+      "part_hors_production": 0.0
+    },
+    "PickAndPlaceUnit": {
+      "kWh_semaine": 6.5899658203125,
+      "kWh_hors_production": 0.0,
+      "part_hors_production": 0.0
+    },
+    "ScreenPrinter": {
+      "kWh_semaine": 4.242371283637153,
+      "kWh_hors_production": 0.0,
+      "part_hors_production": 0.0
+    },
+    "SolderingOven": {
+      "kWh_semaine": 32.40072699652778,
+      "kWh_hors_production": 0.0,
+      "part_hors_production": 0.0
+    },
+    "VacuumPump1": {
+      "kWh_semaine": 29.083015950520835,
+      "kWh_hors_production": 0.0,
+      "part_hors_production": 0.0
+    },
+    "VacuumPump2": {
+      "kWh_semaine": 11.446466742621528,
+      "kWh_hors_production": 0.0,
+      "part_hors_production": 0.0
+    },
+    "talon_site_kW": 6.309999942779541,
+    "heures_hors_production_semaine": 98.0
+  },
+  "libelles": {
+    "ChipPress": "Presse à puces",
+    "ChipSaw": "Scie à puces",
+    "HighTemperatureOven": "Four haute température",
+    "PickAndPlaceUnit": "Machine de placement",
+    "ScreenPrinter": "Sérigraphie",
+    "SolderingOven": "Four de brasage",
+    "VacuumOven": "Four sous vide",
+    "VacuumPump1": "Pompe à vide 1",
+    "VacuumPump2": "Pompe à vide 2",
+    "WashingMachine": "Machine de lavage"
+  }
+}

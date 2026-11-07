@@ -407,6 +407,22 @@ elif page == "Évaluation des modèles":
     st.json(am["maintenance"], expanded=False)
     st.subheader("6. Optimisation")
     st.json({k: v for k, v in opt["resume"].items() if k != "taches"})
+    if (A / "hipe_metrics.json").exists():
+        hm = load_json("hipe_metrics.json")
+        st.subheader("7. Validation sur données industrielles réelles (HIPE, KIT)")
+        st.caption(hm["source"])
+        sig = {k: v for k, v in hm["signatures"].items() if k != "machines"}
+        st.markdown("**Reconnaissance des signatures réelles de 7 machines**")
+        st.dataframe(pd.DataFrame(sig).T[["exactitude", "f1_macro"]].round(4), use_container_width=True)
+        det, rec = hm["detection"], hm["reconnaissance"]
+        kpi_row([("Événements retrouvés au point unique", f"{det['rappel'] * 100:.1f} %",
+                  f"{det['evenements_machines_suivies']} événements des machines suivies"),
+                 ("Attribution des événements", f"{rec['VoltEye - ΔP, ΔQ + harmoniques + forêt aléatoire']['exactitude'] * 100:.1f} %",
+                  "avec harmoniques, arrivée générale"),
+                 ("Prévision à 1 h (MAPE)", f"{hm['prevision_1h']['VoltEye - gradient boosting']['MAPE_%']:.1f} %",
+                  f"persistance : {hm['prevision_1h']['Baseline - valeur d' + chr(39) + 'il y a 1 h']['MAPE_%']:.1f} %"),
+                 ("Énergie hors production", f"{hm['hors_production']['MainTerminal']['part_hors_production'] * 100:.0f} %",
+                  f"talon de {hm['hors_production']['talon_site_kW']:.1f} kW la nuit et le week-end")])
 
 
 # =============================================================================
