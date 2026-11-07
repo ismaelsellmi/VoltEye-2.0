@@ -3,12 +3,15 @@
 Lancement local : uvicorn api.main:app --reload   (documentation interactive : http://localhost:8000/docs)
 """
 import asyncio
+import json
 import logging
 import os
 from contextlib import asynccontextmanager
 from datetime import date
+from functools import lru_cache
 
 import numpy as np
+import pandas as pd
 from fastapi import FastAPI, HTTPException, Query, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
@@ -215,7 +218,7 @@ def grid_day(jour: date):
 
 @app.get("/api/evaluation", tags=["évaluation"])
 def evaluation():
-    return {r["name"]: r["data"] for r in db.rows("SELECT name, data FROM metric WHERE name <> 'zones'")}
+    return {r["name"]: r["data"] for r in db.rows("SELECT name, data FROM metric WHERE name NOT IN ('zones', 'assistant', 'assistant_llm')")}
 
 
 # --- Temps réel ---------------------------------------------------------------------------
@@ -232,7 +235,7 @@ def live(site: str = REF, secondes: int = Query(900, le=86400)):
 
 @app.get("/api/evenements", tags=["temps réel"])
 def events(site: str = REF, limite: int = Query(20, le=500), formes_onde: bool = False):
-    cols = "time, direction, delta_kw, mtype, confidence, proba" + (", waveform" if formes_onde else "")
+    cols = "time, direction, delta_kw, mtype, confidence, proba" + (", waveform, gradcam" if formes_onde else "")
     return db.rows(f"""SELECT {cols} FROM event e JOIN meter t ON t.id = e.meter_id
                        WHERE t.site_id = :s ORDER BY time DESC LIMIT :n""", s=site_id(site), n=limite)
 
@@ -252,6 +255,53 @@ def gaf(req: WaveRequest):
     return {"sequences": {k: v.round(4).tolist() for k, v in seq.items()},
             "image": [gasf(seq[k]).round(3).tolist() for k in ("approximation", "detail", "harmoniques")],
             "harmoniques": (h / h[0] if h[0] > 1e-9 else h)[:15].round(4).tolist()}
+
+
+# --- IA avancée -------------------------------------------------------------------------
+
+@lru_cache(maxsize=1)
+def _shap():
+    path = C.ARTIFACTS / "forecast_shap.json"
+    return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+
+
+@app.get("/api/prevision/explication", tags=["prévision et planning"])
+def forecast_explanation(heure: str | None = None):
+    """Explication SHAP de la prévision : poids moyen de chaque variable, et contributions pour une heure donnée."""
+    data = _shap()
+    if data is None:
+        raise HTTPException(404, "explications SHAP absentes : relancer python -m volteye.pipeline")
+    out = {"importance_moyenne_kWh": data["importance_moyenne_kWh"]}
+    if heure:
+        t = pd.Timestamp(heure)
+        if t.tzinfo is not None:
+            t = t.tz_convert("Africa/Tunis").tz_localize(None)
+        h = data["par_heure"].get(str(t.floor("h")))
+        if h is None:
+            raise HTTPException(404, f"pas d'explication pour {heure} (période de test uniquement)")
+        out["heure"] = {"time": str(t.floor("h")), **h}
+    return out
+
+
+class AskRequest(BaseModel):
+    question: str = Field(..., min_length=2, max_length=1000)
+    historique: list[dict] = Field(default_factory=list, max_length=12)
+
+
+@app.post("/api/assistant", tags=["assistant"])
+def ask(req: AskRequest):
+    """Assistant énergie : réponse en langage naturel, chaque chiffre provenant d'un outil VoltEye."""
+    from agent.assistant import answer
+    return answer(req.question, req.historique)
+
+
+@app.get("/api/assistant/etat", tags=["assistant"])
+def ask_state():
+    from agent.assistant import MODEL, llm_available
+    llm = llm_available()
+    ev = db.scalar("SELECT data FROM metric WHERE name = :n", n="assistant_llm" if llm else "assistant")
+    return {"mode": "llm" if llm else "hors ligne", "modele": MODEL if llm else None,
+            "evaluation": ev["resume"] if ev else None}
 
 
 @app.websocket("/ws/direct")

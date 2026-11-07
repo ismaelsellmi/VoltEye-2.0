@@ -34,6 +34,8 @@ services:
     environment:
       DATABASE_URL: postgresql+psycopg://volteye:volteye@db:5432/volteye
       MQTT_HOST: mqtt
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      VOLTEYE_LLM_MODEL: ${VOLTEYE_LLM_MODEL:-claude-opus-5-5}
     depends_on:
       db:
         condition: service_healthy
@@ -76,6 +78,20 @@ services:
       - mqtt
       - api
     profiles: ["hipe"]
+
+  mcp:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+    command: ["python", "-m", "agent.mcp_server", "--http", "8765"]
+    environment:
+      DATABASE_URL: postgresql+psycopg://volteye:volteye@db:5432/volteye
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8765:8765"
+    profiles: ["mcp"]
 
 volumes:
   db-data:

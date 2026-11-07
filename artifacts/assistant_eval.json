@@ -1,0 +1,288 @@
+{
+  "resume": {
+    "mode": "hors ligne",
+    "modele": null,
+    "questions": 25,
+    "reponses_justes": 25,
+    "bon_outil": 25,
+    "exactitude": 1.0,
+    "duree_s": 2.4
+  },
+  "details": [
+    {
+      "question": "Combien la fuite d'air de février nous a-t-elle coûté, et que faut-il faire ?",
+      "outil_attendu": "anomalies",
+      "outils": [
+        "anomalies"
+      ],
+      "attendu": 263.5,
+      "reponse": "Compresseur d'air (moteur asynchrone), 2026-02 : 15 jours en alerte, du 2026-02-03 au 2026-02-19. Excès estimé : 940 kWh, soit 263,5 TND. Causes : consommation hors production, surconsommation en production.\nAction recommandée : Couper la machine hors production (programmation horaire ou arrêt automatique). Vérifier les réglages et l'état de la machine : surconsommation pendant la production.",
+      "juste": true,
+      "bon_outil": true
+    },
+    {
+      "question": "Combien de jours le compresseur a-t-il été en alerte en août ?",
+      "outil_attendu": "anomalies",
+      "outils": [
+        "anomalies"
+      ],
+      "attendu": 9,
+      "reponse": "Compresseur d'air (moteur asynchrone), 2026-08 : 9 jours en alerte, du 2026-08-08 au 2026-08-17. Excès estimé : 675 kWh, soit 190,9 TND. Causes : consommation hors production, surconsommation en production.\nAction recommandée : Couper la machine hors production (programmation horaire ou arrêt automatique). Vérifier les réglages et l'état de la machine : surconsommation pendant la production.",
+      "juste": true,
+      "bon_outil": true
+    },
+    {
+      "question": "Combien a coûté la veille de la CNC en septembre ?",
+      "outil_attendu": "anomalies",
+      "outils": [
+        "anomalies"
+      ],
+      "attendu": 103.0,
+      "reponse": "Machine CNC (variateur de vitesse), 2026-09 : 7 jours en alerte, du 2026-09-21 au 2026-09-27. Excès estimé : 314 kWh, soit 103,0 TND. Causes : consommation hors production.\nAction recommandée : Couper la machine hors production (programmation horaire ou arrêt automatique).",
+      "juste": true,
+      "bon_outil": true
+    },
+    {
+      "question": "Combien de jours d'alerte sur l'éclairage en octobre ?",
+      "outil_attendu": "anomalies",
+      "outils": [
+        "anomalies"
+      ],
+      "attendu": 2,
+      "reponse": "Éclairage LED (drivers électroniques), 2026-10 : 2 jours en alerte, du 2026-10-03 au 2026-10-04. Excès estimé : 178 kWh, soit 51,7 TND. Causes : consommation hors production.\nAction recommandée : Couper la machine hors production (programmation horaire ou arrêt automatique).",
+      "juste": true,
+      "bon_outil": true
+    },
+    {
+      "question": "Combien de jours d'alerte pour le four en juin ?",
+      "outil_attendu": "anomalies",
+      "outils": [
+        "anomalies"
+      ],
+      "attendu": 0,
+      "reponse": "Four / étuve résistif, 2026-06 : 0 jour en alerte, consommation restée dans la plage attendue.",
+      "juste": true,
+      "bon_outil": true
+    },
+    {
+      "question": "Quel est l'état de santé du convoyeur ?",
+      "outil_attendu": "sante",
+      "outils": [
+        "sante"
+      ],
+      "attendu": 100.0,
+      "reponse": "Convoyeur (moteur direct) : santé 100/100, dérive du THD 0,1 % (alerte cette année le 2026-04-21)\nLa panne du convoyeur a été annoncée 27 jours à l'avance. Seuil : dérive du THD de +25 % par rapport à la référence de la machine.",
+      "juste": true,
+      "bon_outil": true
+    },
+    {
+      "question": "Combien de jours à l'avance la panne du convoyeur a-t-elle été annoncée ?",
+      "outil_attendu": "sante",
+      "outils": [
+        "sante"
+      ],
+      "attendu": 27,
+      "reponse": "Convoyeur (moteur direct) : santé 100/100, dérive du THD 0,1 % (alerte cette année le 2026-04-21)\nLa panne du convoyeur a été annoncée 27 jours à l'avance. Seuil : dérive du THD de +25 % par rapport à la référence de la machine.",
+      "juste": true,
+      "bon_outil": true
+    },
+    {
+      "question": "Quelle est la santé du compresseur ?",
+      "outil_attendu": "sante",
+      "outils": [
+        "sante"
+      ],
+      "attendu": 100.0,
+      "reponse": "Compresseur d'air (moteur asynchrone) : santé 100/100, dérive du THD 0,0 %\nLa panne du convoyeur a été annoncée 27 jours à l'avance. Seuil : dérive du THD de +25 % par rapport à la référence de la machine.",
+      "juste": true,
+      "bon_outil": true
+    },
+    {
+      "question": "Quelle machine consomme le plus, et quelle part de l'énergie ?",
+      "outil_attendu": "indicateurs",
+      "outils": [
+        "indicateurs"
+      ],
+      "attendu": 31.9,
+      "reponse": "Sur 30 jours jusqu'au 2026-10-31 : 25 190 kWh, ≈ 7 431 TND et 12,6 t de CO₂. Premier poste : four / étuve résistif (31,9 %), puis compresseur d'air (moteur asynchrone) (21,1 %), machine cnc (variateur de vitesse) (18,0 %).",
+      "juste": true,
+      "bon_outil": true
+    },
+    {
+      "question": "Combien d'énergie l'atelier a-t-il consommée sur les 30 derniers jours ?",
+      "outil_attendu": "indicateurs",
+      "outils": [
+        "indicateurs"
+      ],
+      "attendu": 25190.0,
+      "reponse": "Sur 30 jours jusqu'au 2026-10-31 : 25 190 kWh, ≈ 7 431 TND et 12,6 t de CO₂. Premier poste : four / étuve résistif (31,9 %), puis compresseur d'air (moteur asynchrone) (21,1 %), machine cnc (variateur de vitesse) (18,0 %).",
+      "juste": true,
+      "bon_outil": true
+    },
+    {
+      "question": "Combien d'énergie est consommée hors production sur 30 jours ?",
+      "outil_attendu": "hors_production",
+      "outils": [
+        "hors_production"
+      ],
+      "attendu": 981.0,
+      "reponse": "Sur 30 jours jusqu'au 2026-10-31, 981 kWh ont été consommés hors production (≈ 206 TND). Premier poste : compresseur d'air (moteur asynchrone), 477 kWh (9,0 % de sa consommation).",
+      "juste": true,
+      "bon_outil": true
+    },
+    {
+      "question": "Combien le compresseur consomme-t-il la nuit et le week-end ?",
+      "outil_attendu": "hors_production",
+      "outils": [
+        "hors_production"
+      ],
+      "attendu": 477.0,
+      "reponse": "Sur 30 jours jusqu'au 2026-10-31, 477 kWh ont été consommés hors production (≈ 100 TND). Compresseur d'air (moteur asynchrone) : 9,0 % de sa consommation.",
+      "juste": true,
+      "bon_outil": true
+    },
+    {
+      "question": "Combien de mégawatts VoltEye Grid efface-t-il pendant la pointe d'été ?",
+      "outil_attendu": "voltEye_grid",
+      "outils": [
+        "voltEye_grid"
+      ],
+      "attendu": 10.3,
+      "reponse": "VoltEye Grid (10 zones, 810 usines, 30 % de participation) abaisse la pointe d'été agrégée de 94,4 MW à 84,1 MW : -10,3 MW (10,9 %), et -6,5 MW face à une réponse au tarif non coordonnée. 60 MWh sont déplacés chaque jour, sans changer l'énergie consommée.",
+      "juste": true,
+      "bon_outil": true
+    },
+    {
+      "question": "Pour le réseau STEG, que gagne la coordination face à une réponse au tarif seul, en MW ?",
+      "outil_attendu": "voltEye_grid",
+      "outils": [
+        "voltEye_grid"
+      ],
+      "attendu": 6.5,
+      "reponse": "VoltEye Grid (10 zones, 810 usines, 30 % de participation) abaisse la pointe d'été agrégée de 94,4 MW à 84,1 MW : -10,3 MW (10,9 %), et -6,5 MW face à une réponse au tarif non coordonnée. 60 MWh sont déplacés chaque jour, sans changer l'énergie consommée.",
+      "juste": true,
+      "bon_outil": true
+    },
+    {
+      "question": "Combien de MWh VoltEye Grid déplace-t-il chaque jour ?",
+      "outil_attendu": "voltEye_grid",
+      "outils": [
+        "voltEye_grid"
+      ],
+      "attendu": 60.0,
+      "reponse": "VoltEye Grid (10 zones, 810 usines, 30 % de participation) abaisse la pointe d'été agrégée de 94,4 MW à 84,1 MW : -10,3 MW (10,9 %), et -6,5 MW face à une réponse au tarif non coordonnée. 60 MWh sont déplacés chaque jour, sans changer l'énergie consommée.",
+      "juste": true,
+      "bon_outil": true
+    },
+    {
+      "question": "Quelle est l'erreur de la prévision du lendemain ?",
+      "outil_attendu": "prevision",
+      "outils": [
+        "prevision"
+      ],
+      "attendu": 7.7,
+      "reponse": "La prévision du lendemain se trompe en moyenne de 7,7 % (référence : 12,3 %). La fourchette P10-P90 contient 88,1 % des heures réelles.",
+      "juste": true,
+      "bon_outil": true
+    },
+    {
+      "question": "Quelle part des heures réelles tombe dans la fourchette de prévision ?",
+      "outil_attendu": "prevision",
+      "outils": [
+        "prevision"
+      ],
+      "attendu": 88.1,
+      "reponse": "La prévision du lendemain se trompe en moyenne de 7,7 % (référence : 12,3 %). La fourchette P10-P90 contient 88,1 % des heures réelles.",
+      "juste": true,
+      "bon_outil": true
+    },
+    {
+      "question": "Combien le planning optimisé fait-il économiser par an ?",
+      "outil_attendu": "planning",
+      "outils": [
+        "planning"
+      ],
+      "attendu": 16063.0,
+      "reponse": "Le planning optimisé réduit la facture des jours ouvrés de 12,6 % (55,4 TND par jour, ≈ 16 063 TND par an) et la pointe de 77 kW. Face à un opérateur qui suit déjà le tarif, il gagne encore 1,1 %.",
+      "juste": true,
+      "bon_outil": true
+    },
+    {
+      "question": "De combien le planning optimisé réduit-il la facture ?",
+      "outil_attendu": "planning",
+      "outils": [
+        "planning"
+      ],
+      "attendu": 12.6,
+      "reponse": "Le planning optimisé réduit la facture des jours ouvrés de 12,6 % (55,4 TND par jour, ≈ 16 063 TND par an) et la pointe de 77 kW. Face à un opérateur qui suit déjà le tarif, il gagne encore 1,1 %.",
+      "juste": true,
+      "bon_outil": true
+    },
+    {
+      "question": "Quelle est l'exactitude de la reconnaissance des machines ?",
+      "outil_attendu": "evaluation",
+      "outils": [
+        "evaluation"
+      ],
+      "attendu": 97.9,
+      "reponse": "Reconnaissance des machines : 97,9 %. Détection des gaspillages sur 4 mois jamais vus : F1 0,82 (référence 0,18). Prévision : 7,7 % d'erreur. Sur données réelles (HIPE), signatures reconnues à 99,9 %.",
+      "juste": true,
+      "bon_outil": true
+    },
+    {
+      "question": "Quel est le F1 de la détection des gaspillages ?",
+      "outil_attendu": "evaluation",
+      "outils": [
+        "evaluation"
+      ],
+      "attendu": 0.82,
+      "reponse": "Reconnaissance des machines : 97,9 %. Détection des gaspillages sur 4 mois jamais vus : F1 0,82 (référence 0,18). Prévision : 7,7 % d'erreur. Sur données réelles (HIPE), signatures reconnues à 99,9 %.",
+      "juste": true,
+      "bon_outil": true
+    },
+    {
+      "question": "Quel tarif est appliqué à l'heure de pointe ?",
+      "outil_attendu": "recherche_documentation",
+      "outils": [
+        "recherche_documentation"
+      ],
+      "attendu": 0.43,
+      "reponse": "0,210 TND/kWh la nuit (22 h - 6 h), 0,295 TND/kWh le jour et 0,430 TND/kWh à l'heure de pointe. La pointe tarifaire est placée le soir en hiver (18 h - 22 h) et en journée en été (9 h - 14 h, de juin à août). Une pénalité de 0,60 TND par kW de pointe journalière représente le coût de la puissance appelée.",
+      "juste": true,
+      "bon_outil": true
+    },
+    {
+      "question": "Comment réparer une fuite d'air comprimé ?",
+      "outil_attendu": "recherche_documentation",
+      "outils": [
+        "recherche_documentation"
+      ],
+      "attendu": "ultrasons",
+      "reponse": "Une fuite d'air comprimé fait tourner le compresseur plus longtemps, surtout hors production quand aucun outil ne consomme d'air. Actions : lancer une campagne de recherche de fuites (détecteur à ultrasons ou eau savonneuse sur raccords, flexibles et purgeurs), réparer les fuites les plus importantes en premier, couper le compresseur ou isoler le réseau hors production, et vérifier la pression de consigne (chaque bar inutile coûte environ 7 % d'énergie au compresseur).",
+      "juste": true,
+      "bon_outil": true
+    },
+    {
+      "question": "Comment VoltEye reconnaît-il une machine avec un seul compteur ?",
+      "outil_attendu": "recherche_documentation",
+      "outils": [
+        "recherche_documentation"
+      ],
+      "attendu": "40 ms",
+      "reponse": "VoltEye mesure le courant et la tension à l'arrivée générale (3 200 échantillons par seconde). À chaque démarrage ou arrêt, il isole la variation du courant sur 40 ms, la décompose (ondelette db4 et spectre harmonique), la transforme en image (Gramian Angular Field) et un réseau de neurones convolutif, fusionné avec une forêt aléatoire sur le spectre, reconnaît la machine. En additionnant les machines reconnues, VoltEye reconstitue la consommation de chacune :",
+      "juste": true,
+      "bon_outil": true
+    },
+    {
+      "question": "Pourquoi la pointe se reforme-t-elle quand chaque usine suit le tarif ?",
+      "outil_attendu": "recherche_documentation",
+      "outils": [
+        "recherche_documentation"
+      ],
+      "attendu": "rebond",
+      "reponse": "Des déclarations relayées par la presse en 2026 évoquent une demande de pointe proche de 6 000 MW et un déficit de 1 500 à 2 000 MW aux heures de pointe, avec des délestages préventifs (chiffres de presse, pas un bilan officiel). VoltEye Grid agrège la flexibilité des usines équipées sur plusieurs zones industrielles, prévoit la demande du lendemain et répartit les démarrages pour abaisser la pointe agrégée sans changer l'énergie consommée. Quand chaque usine réagit seule au tarif, toutes basculent à la même heure et la pointe se reforme plus tard (effet rebond) :",
+      "juste": true,
+      "bon_outil": true
+    }
+  ]
+}

@@ -10,3 +10,4 @@ data/raw/
 node_modules/
 web/dist/
 *.log
+data/models/
