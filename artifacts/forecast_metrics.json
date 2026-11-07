@@ -19,5 +19,26 @@
       "RMSE_kWh": 10.569584011013514,
       "MAPE_%_heures_actives": 12.307988597425444
     }
+  },
+  "quantiles": {
+    "couverture_P10_P90": 0.88125,
+    "couverture_heures_production": 0.8655913978494624,
+    "couverture_hors_production": 0.8979885057471264,
+    "largeur_moyenne_kWh": 5.231358065999077,
+    "cible": 0.8,
+    "methode": "régression quantile conformalisée, calibrée sur les 45 derniers jours d'apprentissage"
+  },
+  "importance_shap": {
+    "planning de production": 32.575730383243645,
+    "température prévue": 1.9005079557984637,
+    "consommation de la veille, même heure": 0.35512994376740725,
+    "moyenne de la veille": 0.31625328483984105,
+    "consommation de la semaine passée, même heure": 0.2458599528767457,
+    "heure de la journée": 0.16631585978869073,
+    "pointe de la veille": 0.16325829584189175,
+    "mois": 0.07647883781975821,
+    "jour de la semaine": 0.0562048650405841,
+    "Ramadan": 0.0030039181303124947,
+    "jour férié": 0.002639694519848585
   }
 }

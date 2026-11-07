@@ -14,4 +14,5 @@ streamlit==1.65.0
 plotly==6.7.0
 matplotlib==3.10.5
 pytest==9.0.3
+shap==0.49.1
 # Génération du rapport et du pitch : pip install -r requirements-livrables.txt
