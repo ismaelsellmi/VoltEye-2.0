@@ -1,15 +1,17 @@
-# PyTorch CPU : pip install torch --index-url https://download.pytorch.org/whl/cpu
-torch>=2.2
-numpy>=1.26
-pandas>=2.1
-pyarrow>=15
-scikit-learn>=1.4
-PyWavelets>=1.5
-PuLP>=2.8
-highspy>=1.7
-streamlit>=1.40
-plotly>=5.24
-matplotlib>=3.8
-# génération du rapport et du pitch (facultatif)
-python-docx>=1.1
-python-pptx>=0.6
+# Cœur IA et tableau de bord Streamlit : versions testées (Python 3.10 à 3.12)
+# PyTorch CPU : pip install torch==2.5.1 --index-url https://download.pytorch.org/whl/cpu
+torch==2.5.1
+numpy==1.26.4
+pandas==2.3.0
+pyarrow==20.0.0
+scikit-learn==1.7.2
+scipy==1.15.3
+joblib==1.5.1
+PyWavelets==1.8.0
+PuLP==3.3.2
+highspy==1.15.1
+streamlit==1.65.0
+plotly==6.7.0
+matplotlib==3.10.5
+pytest==9.0.3
+# Génération du rapport et du pitch : pip install -r requirements-livrables.txt
