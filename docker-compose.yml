@@ -54,6 +54,15 @@ services:
       - mqtt
       - api
 
+  web:
+    build:
+      context: .
+      dockerfile: docker/web.Dockerfile
+    depends_on:
+      - api
+    ports:
+      - "8080:80"
+
   edge-hipe:
     build:
       context: .
