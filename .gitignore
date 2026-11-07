@@ -3,3 +3,10 @@ __pycache__/
 *.pyc
 .pytest_cache/
 .streamlit/secrets.toml
+.env
+.claude/
+CLAUDE.md
+data/raw/
+node_modules/
+web/dist/
+*.log
