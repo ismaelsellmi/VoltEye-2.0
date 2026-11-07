@@ -132,6 +132,50 @@ function ForecastModule({ onPick }: { onPick: (t: string) => void }) {
   );
 }
 
+type Solar = {
+  installation: { kWc: number };
+  production_MWh_an: number; productible_kWh_kWc: number; "autoconsommation_%": number; "autoproduction_%": number;
+  economie_TND_an: number; co2_evite_t_an: number;
+  pointe_tarifaire_ete: { achat_moyen_sans_pv_kW: number; achat_moyen_avec_pv_kW: number };
+  "prevision_J+1": Record<string, Json>;
+  semaine_ete: { time: string[]; charge_kW: number[]; pv_kW: number[]; achat_reseau_kW: number[] };
+};
+
+function SolarModule() {
+  const { data: s } = useApi<Solar>("/api/solaire");
+  if (!s) return null;
+  const w = s.semaine_ete;
+  return (
+    <Module title={`Solaire en toiture · ${s.installation.kWc} kWc`}>
+      <div className="mb-4 grid grid-cols-2 gap-6 md:grid-cols-4">
+        <Stat value={nf(s.production_MWh_an, 0)} unit="MWh/an" caption={`${nf(s.productible_kWh_kWc, 0)} kWh par kWc installé`} />
+        <Stat value={`${nf(s["autoconsommation_%"], 0)} %`} caption={`autoconsommés ; ${nf(s["autoproduction_%"], 0)} % des besoins couverts`} />
+        <Stat value={nf(s.economie_TND_an, 0)} unit="TND/an" caption={`et ${nf(s.co2_evite_t_an, 1)} t de CO₂ évitées`} tone="good" />
+        <Stat value={`${nf(s.pointe_tarifaire_ete.achat_moyen_sans_pv_kW, 0)} → ${nf(s.pointe_tarifaire_ete.achat_moyen_avec_pv_kW, 0)}`} unit="kW" caption="achat moyen au réseau pendant la pointe tarifaire d'été" tone="good" />
+      </div>
+      <Chart
+        label="Semaine d'été : consommation du site, production solaire et achat au réseau"
+        height={280}
+        deps={[w.time.length]}
+        option={(p) => ({
+          tooltip: { valueFormatter: (v: number) => `${nf(v, 1)} kW` },
+          xAxis: { type: "category", data: w.time.map((t) => `${fmtShortDay(t)} · ${new Date(t).getHours()} h`), axisLabel: { formatter: (v: string) => v.split(" · ")[0], interval: 23 } },
+          yAxis: { type: "value", name: "kW", min: 0 },
+          series: [
+            { name: "Production solaire", type: "line", symbol: "none", lineStyle: { width: 0 }, areaStyle: { color: p.signal, opacity: 0.45 }, itemStyle: { color: p.signal }, data: w.pv_kW },
+            { name: "Consommation du site", type: "line", symbol: "none", lineStyle: { width: 1.5, color: p.ink3 }, itemStyle: { color: p.ink3 }, data: w.charge_kW },
+            { name: "Achat au réseau", type: "line", symbol: "none", lineStyle: { width: 2, color: p.accent }, itemStyle: { color: p.accent }, data: w.achat_reseau_kW },
+          ],
+        })}
+      />
+      <p className="mt-2 text-xs text-ink-3">
+        Modèle physique (position du soleil, ciel clair, clarté mensuelle de Tunis), panneaux plein sud inclinés à 30°. Le solaire
+        produit pendant la pointe tarifaire d'été : c'est là qu'il allège le plus le réseau.
+      </p>
+    </Module>
+  );
+}
+
 export default function Prevision() {
   const [day, setDay] = useState<string | null>(null);
   const [hour, setHour] = useState<string | null>(null);
@@ -163,6 +207,7 @@ export default function Prevision() {
       <div className="grid gap-4">
         <ForecastModule onPick={setHour} />
         <ShapModule hour={hour} />
+        <SolarModule />
 
         {error ? <ErrorBox error={error} /> : isLoading || !data || !d || !series ? <Loading height={420} /> : (
           <Module
