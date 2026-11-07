@@ -58,7 +58,7 @@ Détails : [docs/architecture.md](docs/architecture.md).
 Prérequis : Python 3.10 à 3.12.
 
 ```bash
-git clone https://github.com/wathekzg/VOLTEYE.git volteye
+git clone https://github.com/ismaelsellmi/VoltEye-2.0.git volteye
 cd volteye
 python -m venv .venv
 # Windows : .venv\Scripts\activate     Linux / macOS : source .venv/bin/activate
@@ -81,8 +81,23 @@ python -m volteye.pipeline
 Tests :
 
 ```bash
-python tests/test_volteye.py
+python -m pytest tests
 ```
+
+### Plateforme complète (Docker)
+
+Base TimescaleDB, broker MQTT, API et passerelle edge simulée, en une commande :
+
+```bash
+docker compose up --build
+```
+
+- API et documentation interactive : http://localhost:8000/docs
+- WebSocket du direct : `ws://localhost:8000/ws/direct`
+- Rejeu d'une journée réelle de l'usine HIPE en plus : `docker compose --profile hipe up --build`
+
+La base est remplie automatiquement au premier démarrage à partir de `artifacts/`. Validation sur données
+réelles : `python scripts/telecharger_hipe.py` puis `python -m volteye.pipeline`.
 
 ## Le tableau de bord
 
