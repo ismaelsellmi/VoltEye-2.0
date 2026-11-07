@@ -3,12 +3,16 @@
 Usage : python -m volteye.pipeline   (environ 1 minute sur un portable)
 """
 import json
+import sys
 import time
 
 from . import anomaly, city, config as C, forecasting, history, optimization, recognition, stream
 
 
 def main():
+    for s in (sys.stdout, sys.stderr):           # journaux lisibles dans toutes les consoles
+        if hasattr(s, "reconfigure"):
+            s.reconfigure(encoding="utf-8")
     t0 = time.time()
     C.ARTIFACTS.mkdir(parents=True, exist_ok=True)
     rec, _ = recognition.run()
