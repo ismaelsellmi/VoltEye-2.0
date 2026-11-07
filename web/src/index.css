@@ -1,0 +1,167 @@
+@import "tailwindcss";
+
+/* Identité « armoire électrique » : fond gris d'armoire (RAL 7035), modules clairs fixés sur rail,
+   bleu du conducteur de neutre pour les actions, jaune de signalisation pour le direct et les alertes. */
+:root {
+  color-scheme: light;
+  --panel: #dcded9;
+  --rail: #c9ccc6;
+  --module: #fbfbf8;
+  --module-2: #f1f2ee;
+  --edge: #c2c6bf;
+  --ink: #1b201e;
+  --ink-2: #48504c;
+  --ink-3: #5f6763;
+  --accent: #1d5fa6;
+  --accent-ink: #ffffff;
+  --signal: #f2c200;
+  --signal-ink: #1b201e;
+  --good: #1e7b45;
+  --warning: #9a6200;
+  --critical: #b42318;
+  --grid: #e3e5e0;
+
+  /* Machines : palette catégorielle validée (ordre fixe, vision des couleurs déficiente comprise) */
+  --m-compresseur: #2a78d6;
+  --m-four: #eb6834;
+  --m-cvc: #1baf7a;
+  --m-eclairage: #eda100;
+  --m-soudage: #e87ba4;
+  --m-cnc: #008300;
+  --m-convoyeur: #6250d6;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --panel: #121615;
+    --rail: #1a1f1d;
+    --module: #202523;
+    --module-2: #262c29;
+    --edge: #343b38;
+    --ink: #eceeeb;
+    --ink-2: #b9c0bc;
+    --ink-3: #939b97;
+    --accent: #6ea8f0;
+    --accent-ink: #0d1b2c;
+    --good: #4cc386;
+    --warning: #e3a54a;
+    --critical: #f0705f;
+    --grid: #2c3330;
+    --m-compresseur: #3987e5;
+    --m-four: #d95926;
+    --m-cvc: #199e70;
+    --m-eclairage: #c98500;
+    --m-soudage: #d55181;
+    --m-cnc: #008300;
+    --m-convoyeur: #9085e9;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --panel: #121615;
+  --rail: #1a1f1d;
+  --module: #202523;
+  --module-2: #262c29;
+  --edge: #343b38;
+  --ink: #eceeeb;
+  --ink-2: #b9c0bc;
+  --ink-3: #939b97;
+  --accent: #6ea8f0;
+  --accent-ink: #0d1b2c;
+  --good: #4cc386;
+  --warning: #e3a54a;
+  --critical: #f0705f;
+  --grid: #2c3330;
+  --m-compresseur: #3987e5;
+  --m-four: #d95926;
+  --m-cvc: #199e70;
+  --m-eclairage: #c98500;
+  --m-soudage: #d55181;
+  --m-cnc: #008300;
+  --m-convoyeur: #9085e9;
+}
+
+@theme inline {
+  --font-display: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --font-sans: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  --color-panel: var(--panel);
+  --color-rail: var(--rail);
+  --color-module: var(--module);
+  --color-module-2: var(--module-2);
+  --color-edge: var(--edge);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-signal: var(--signal);
+  --color-signal-ink: var(--signal-ink);
+  --color-good: var(--good);
+  --color-warning: var(--warning);
+  --color-critical: var(--critical);
+}
+
+html,
+body {
+  background: var(--panel);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.reading {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
+  line-height: 0.95;
+}
+
+.label-strip {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Rayures de signalisation : alertes actives */
+.hazard {
+  background-image: repeating-linear-gradient(-45deg, var(--signal) 0 7px, var(--ink) 7px 14px);
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.live-dot {
+  animation: pulse-dot 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
