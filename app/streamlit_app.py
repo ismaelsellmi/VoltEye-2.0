@@ -350,23 +350,41 @@ elif page == "Prévision & optimisation":
 
 # =============================================================================
 elif page == "Vue ville":
-    st.title("VoltEye à l'échelle de la ville")
-    st.markdown("Chaque site équipé d'un terminal VoltEye remonte ses indicateurs vers le cloud : la ville et le "
-                "distributeur d'énergie disposent d'une **carte de la charge industrielle**, des gaspillages et des "
-                "gisements d'économies. *(Sites fictifs extrapolés du site de référence.)*")
-    sites = pd.DataFrame(load_json("city_sites.json"))
-    kpi_row([("Sites connectés", str(len(sites)), None),
-             ("Consommation", f"{fmt(sites['consommation_MWh_an'].sum())} MWh/an", None),
-             ("Gaspillage détecté", f"{fmt(sites['gaspillage_detecte_MWh_an'].sum())} MWh/an", None),
-             ("CO₂ évitable", f"{fmt(sites['co2_evitable_t_an'].sum(), 1)} t/an", None),
-             ("Gain planification", f"{fmt(sites['gain_planification_TND_an'].sum())} TND/an", None)])
-    fig = px.scatter_map(sites, lat="lat", lon="lon", size="consommation_MWh_an", color="sante_moyenne",
-                         color_continuous_scale="RdYlGn", range_color=[70, 100], hover_name="site",
-                         hover_data={"secteur": True, "alertes_actives": True, "lat": False, "lon": False},
-                         center=dict(lat=35.6, lon=10.0), zoom=5.8, height=560, map_style="open-street-map")
-    fig.update_layout(margin=dict(l=0, r=0, t=0, b=0), coloraxis_colorbar_title="santé")
+    st.title("VoltEye Grid : passer la pointe d'été sans délester")
+    g = load_json("grid.json")
+    gs = g["resume"]
+    st.markdown(f"Chaque usine équipée connaît ses charges décalables. VoltEye Grid agrège la flexibilité de "
+                f"**{gs['usines']} usines** réparties dans **{gs['zones']} zones industrielles**, prévoit la demande du "
+                f"lendemain et répartit les démarrages pour abaisser la **pointe agrégée vue par le réseau STEG**. "
+                f"Évaluation sur les {gs['jours_evalues']} jours ouvrés les plus chargés de l'été 2026, "
+                f"avec {gs['participation'] * 100:.0f} % d'usines participantes (zones simulées).")
+    pm = gs["pointe_moyenne_MW"]
+    kpi_row([("Pointe agrégée, pratique actuelle", f"{pm['pratique_actuelle']:.1f} MW", None),
+             ("Réponse au tarif seul", f"{pm['tarif_seul']:.1f} MW", "chaque usine vise l'heure la moins chère : effet rebond"),
+             ("Avec VoltEye Grid", f"{pm['voltEye_grid']:.1f} MW", None),
+             ("Effacement", f"-{gs['effacement_MW_vs_pratique']:.1f} MW",
+              f"{gs['effacement_%_vs_pratique']:.1f} % ; -{gs['effacement_MW_vs_tarif_seul']:.1f} MW face au tarif seul"),
+             ("Énergie déplacée", f"{gs['energie_deplacee_MWh_jour']:.0f} MWh/jour", "même énergie, autres heures")])
+    day = st.selectbox("Jour d'été", [d["jour"] for d in g["jours"]])
+    d = next(x for x in g["jours"] if x["jour"] == day)
+    fig = go.Figure()
+    for key, name, color, width in [("pratique_actuelle", "Pratique actuelle", "#e4572e", 2),
+                                    ("tarif_seul", "Réponse au tarif seul", "#f2a541", 2),
+                                    ("voltEye_grid", "VoltEye Grid", "#29a36a", 4)]:
+        fig.add_trace(go.Scatter(x=list(range(24)), y=d[key]["profil_MW"], name=f"{name} ({d[key]['pointe_MW']:.1f} MW)",
+                                 line=dict(shape="hv", color=color, width=width)))
+    fig.update_layout(height=380, xaxis_title="heure", yaxis_title="MW (10 zones)", legend=dict(orientation="h", y=-0.2))
     st.plotly_chart(fig, use_container_width=True)
-    st.dataframe(sites.drop(columns=["lat", "lon"]).round(1), hide_index=True, use_container_width=True)
+    sites = pd.DataFrame(load_json("city_sites.json"))
+    fig = px.scatter_map(sites, lat="lat", lon="lon", size="flexibilite_MW", color="pointe_MW",
+                         color_continuous_scale="OrRd", hover_name="site",
+                         hover_data={"secteur": True, "usines": True, "flexibilite_MW": ":.1f", "lat": False, "lon": False},
+                         center=dict(lat=35.6, lon=10.0), zoom=5.8, height=520, map_style="open-street-map")
+    fig.update_layout(margin=dict(l=0, r=0, t=0, b=0), coloraxis_colorbar_title="pointe (MW)")
+    st.plotly_chart(fig, use_container_width=True)
+    st.dataframe(sites[["site", "secteur", "usines", "consommation_MWh_an", "pointe_MW", "flexibilite_MW",
+                        "part_hors_production_%", "gain_planification_TND_an"]].round(1),
+                 hide_index=True, use_container_width=True)
 
 
 # =============================================================================
