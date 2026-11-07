@@ -51,7 +51,7 @@ capteur (3,2 kHz) ──► mesures 1/s (P, Q, FP, THD) ──► détection de 
   continus (`measurement_15min`, `machine_load_daily`) et compression automatique des mesures de plus de
   7 jours. **pgvector** range les documents de l'assistant (RAG) dans la même base.
 - **Rôle en lecture seule** (`volteye_lecture`) pour l'outil SQL de l'assistant.
-- **Assistant énergie** (`agent/`) : boucle d'outils sur un modèle Claude (repli automatique côté serveur en
+- **Assistant énergie** (`agent/`) : boucle d'outils sur un grand modèle de langage configurable (repli automatique en
   cas de refus), onze outils VoltEye, recherche hybride dans la documentation (pgvector + plein texte) ; un
   mode hors ligne appelle les mêmes outils sans réseau. **Serveur MCP** (`agent/mcp_server.py`, transports
   stdio et HTTP) : les mêmes outils pour tout assistant IA compatible.

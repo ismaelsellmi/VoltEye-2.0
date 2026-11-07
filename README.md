@@ -99,7 +99,7 @@ pip install -r requirements.txt -r requirements-server.txt
 | `streamlit run app/streamlit_app.py` | Tableau de bord Streamlit |
 | `python -m pytest tests` | Tests (les tests de l'API utilisent la base Docker) |
 
-L'assistant fonctionne en mode LLM avec une clé d'API Anthropic dans `.env` (voir `.env.example`) ; sans clé,
+L'assistant fonctionne en mode LLM (fournisseur configurable) avec une clé d'API dans `.env` (voir `.env.example`) ; sans clé,
 un aiguillage hors ligne appelle les mêmes outils. Configuration type d'un client MCP de bureau :
 
 ```json
