@@ -340,6 +340,12 @@ elif page == "Prévision & optimisation":
                                    for t, r, o in zip(TASKS, d["ref"], d["opt"])]), hide_index=True, use_container_width=True)
         st.success(f"Facture du jour : {d['facture_ref_TND']:.0f} TND → **{d['facture_opt_TND']:.0f} TND** · "
                    f"pointe {d['pointe_ref_kW']:.0f} kW → **{d['pointe_opt_kW']:.0f} kW**")
+        op = res.get("reference_operateur_averti")
+        if op:
+            st.info(f"Face à un opérateur qui connaît déjà le tarif (chaque tâche à l'heure la moins chère, sans "
+                    f"coordination), l'optimiseur gagne encore **{op['gain_moyen_%']:.1f} %** "
+                    f"({op['gain_moyen_TND_par_jour']:.1f} TND/jour) et **{op['reduction_pointe_moyenne_kW']:.0f} kW** "
+                    f"de pointe, grâce à la coordination des tâches.")
 
 
 # =============================================================================
@@ -380,10 +386,21 @@ elif page == "Évaluation des modèles":
     st.subheader("2. Désagrégation du flux temps réel (4 h, 1 mesure/s)")
     st.dataframe(pd.DataFrame([{k: v for k, v in sm.items() if not isinstance(v, (list, dict))}]).round(3),
                  hide_index=True, use_container_width=True)
+    if "scenario_dense" in sm:
+        dn = sm["scenario_dense"]
+        st.caption(f"Scénario dense ({dn['duree_min']} min, {dn['evenements_reels']} événements dont "
+                   f"{dn['evenements_a_moins_de_4_s']} à moins de 4 s d'écart) : détection F1 {dn['detection_f1']:.3f}, "
+                   f"reconnaissance {dn['classification_exactitude'] * 100:.1f} %.")
     st.dataframe(pd.DataFrame(sm["par_machine"]).T.round(3), use_container_width=True)
     st.subheader("3. Prévision J+1")
     st.dataframe(pd.DataFrame(fm["models"]).T.round(2), use_container_width=True)
     st.subheader("4. Détection d'anomalies (jours-machine)")
+    pr = am.get("protocole")
+    if pr:
+        st.caption(f"Backtest glissant : modèle réentraîné chaque mois sur le passé uniquement. Seuils réglés sur la "
+                   f"validation ({pr['validation'][0]} → {pr['validation'][1]}), score publié sur le test "
+                   f"({pr['test'][0]} → {pr['test'][1]}) : {pr['jours_test']} jours-machine, "
+                   f"dont {pr['jours_anormaux_test']} anormaux.")
     st.dataframe(pd.DataFrame(am["models"]).T.round(3), use_container_width=True)
     st.dataframe(pd.DataFrame(am["rappel_par_type"]).T.round(2), use_container_width=True)
     st.subheader("5. Maintenance prédictive")
