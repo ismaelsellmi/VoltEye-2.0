@@ -36,6 +36,11 @@ et des modifications d'équipements souvent certifiés. **Ce qui n'est pas mesur
 Toutes les métriques sont mesurées sur des données jamais vues à l'entraînement et comparées à des
 baselines (voir [docs/resultats.md](docs/resultats.md) et la page « Évaluation » de l'application).
 
+**Validé sur mesures industrielles réelles** (jeu public HIPE du KIT, une semaine au pas de 5 s) : 7 machines
+reconnues à **99,9 %** à partir de leur signature harmonique, 82 % des événements retrouvés depuis
+l'arrivée générale, prévision à 1 h meilleure que la persistance (MAPE 14,8 % contre 18,7 %), et 29 % de
+l'énergie consommée hors production mise en évidence.
+
 ## Architecture
 
 ```

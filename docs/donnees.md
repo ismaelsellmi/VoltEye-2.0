@@ -2,7 +2,8 @@
 
 Le règlement autorise les données « publiques, fournies, simulées ou synthétiques » à condition de
 documenter sources, hypothèses, prétraitements et limites. VoltEye repose sur un **simulateur physique**
-dont tous les paramètres sont dans le code (`volteye/signals.py`, `stream.py`, `history.py`, `config.py`).
+dont tous les paramètres sont dans le code (`volteye/signals.py`, `stream.py`, `history.py`, `config.py`),
+et il est validé sur une semaine de **mesures industrielles réelles** (jeu public HIPE, section 5).
 
 ## 1. Signatures électriques des machines (`signals.py`)
 
@@ -61,11 +62,33 @@ dont tous les paramètres sont dans le code (`volteye/signals.py`, `stream.py`, 
 | Plages de pointe | soir 18 h–22 h (hiver), 9 h–14 h (été) | Hypothèse |
 | Pénalité de pointe | 0,60 TND par kW de pointe journalière | Hypothèse |
 
-## 5. Limites
+## 5. Données industrielles réelles : HIPE (`hipe.py`)
 
-- Les données sont simulées : les performances réelles seront plus faibles. Un pilote sur site est la
-  première étape (voir le rapport).
-- Une seule machine de chaque type par atelier : deux machines identiques en parallèle ne se distinguent
-  pas par leur signature.
-- Les événements simultanés (moins de 4 s d'écart) ne sont pas simulés.
-- Les sites de la vue ville sont fictifs, extrapolés du site de référence.
+- **Source** : *High-resolution Industrial Production Energy*, Karlsruher Institut für Technologie (KIT),
+  usine d'électronique de puissance. Licence CC BY 4.0. Sous-ensemble : semaine du 23 au 29 octobre 2017.
+- **Contenu** : arrivée générale et 10 machines (fours, pompes à vide, sérigraphie, machine de placement,
+  scie, presse, lavage), une mesure toutes les 5 s environ : P, Q, S, THD et taux harmoniques de courant
+  (rangs 3 à 15) par phase.
+- **Téléchargement** : `python scripts/telecharger_hipe.py` (archive de 109 Mo, lue sans extraction).
+- **Prétraitement** : horodatage converti en heure locale, moyenne sur une grille régulière de 5 s,
+  moyenne des phases pour le THD et les harmoniques, courants harmoniques en ampères à partir des taux
+  (en %) et du courant fondamental, interpolation des trous d'au plus 10 s.
+- **Vérité terrain** : les marches de puissance mesurées directement sur chaque machine. Un événement vu à
+  l'arrivée générale prend le nom de la machine qui a basculé au même instant (± 15 s), sinon « autre ».
+- **Découpage** : pour chaque classe, les 70 % premiers événements (dans le temps) servent à
+  l'apprentissage et les suivants au test ; prévision : lundi-mercredi pour apprendre, jeudi-vendredi pour
+  tester.
+- **Rejeu** : la journée réelle du jeudi 26/10/2017 au pas de 5 s (`artifacts/hipe_replay.parquet`)
+  alimente la passerelle edge simulée.
+
+## 6. Hypothèses et périmètre
+
+- **Validation** : simulateur physique paramétré, complété par une semaine de mesures industrielles
+  réelles (HIPE). L'étape suivante est un pilote sur un site tunisien, avec la grille tarifaire STEG en
+  vigueur.
+- **Reconnaissance** : une machine de chaque type par atelier ; plusieurs machines identiques en
+  parallèle sont suivies comme un groupe.
+- **Événements rapprochés** : évalués jusqu'à une seconde d'écart (scénario dense, `stream.py`).
+- **HIPE** : la forme d'onde brute n'est pas publiée ; la branche spectre harmonique de la reconnaissance
+  est validée sur ces données, la branche images GAF sur formes d'onde simulées.
+- **Vue ville** : sites fictifs placés dans des zones industrielles tunisiennes réelles.
