@@ -106,3 +106,21 @@ voisine (pompes à vide et four haute température autour de 0,9 kW).
 **Énergie hors production** : 29 % de l'énergie de la semaine (780 kWh sur 2 705) est consommée la nuit
 et le week-end, avec un talon de 6,3 kW quand l'usine est à l'arrêt. C'est exactement le gisement que
 VoltEye rend visible et chiffre pour chaque site.
+
+## 8. VoltEye Grid : effacement coordonné de la pointe d'été
+
+10 zones industrielles tunisiennes simulées (810 usines, profils sectoriels), 30 % d'usines inscrites au
+programme, soit 26 MW de charges flexibles. La demande de chaque zone est prévue la veille (modèle
+entraîné jusqu'au 30 juin) ; le programme linéaire répartit les démarrages de chaque zone pour abaisser
+la pointe agrégée ; les trois stratégies sont rejouées sur la demande réelle des 10 jours ouvrés les plus
+chargés de l'été 2026.
+
+| Stratégie | Pointe agrégée moyenne | Heure de pointe |
+|---|---|---|
+| Pratique actuelle (démarrage en début de poste) | 94,4 MW | 8 h |
+| Réponse au tarif seul (chaque usine vise l'heure la moins chère) | 90,6 MW | 15 h (effet rebond) |
+| **VoltEye Grid** (démarrages coordonnés) | **84,1 MW** | étalée |
+
+**-10,3 MW** de pointe (-10,9 %) face à la pratique actuelle et **-6,5 MW** (-7,2 %) face à une réponse au
+tarif non coordonnée, à coût énergétique égal pour les usines. 60 MWh par jour sont déplacés : la même
+énergie, consommée à d'autres heures.

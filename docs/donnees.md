@@ -91,4 +91,6 @@ et il est validé sur une semaine de **mesures industrielles réelles** (jeu pub
 - **Événements rapprochés** : évalués jusqu'à une seconde d'écart (scénario dense, `stream.py`).
 - **HIPE** : la forme d'onde brute n'est pas publiée ; la branche spectre harmonique de la reconnaissance
   est validée sur ces données, la branche images GAF sur formes d'onde simulées.
-- **Vue ville** : sites fictifs placés dans des zones industrielles tunisiennes réelles.
+- **VoltEye Grid** : 10 zones simulées, placées dans des zones industrielles tunisiennes réelles ; nombre
+  d'usines par zone, profils sectoriels et participation de 30 % au programme : hypothèses de déploiement
+  (`grid.py`).

@@ -32,6 +32,7 @@ et des modifications d'équipements souvent certifiés. **Ce qui n'est pas mesur
 | **Détecter** les gaspillages | Consommation attendue réentraînée chaque mois + score robuste des résidus | **F1 0,82** sur 4 mois jamais vus, précision 0,87 (baseline z-score : F1 0,18) |
 | **Anticiper** les pannes | Dérive de la distorsion harmonique (THD), score de santé | panne anticipée **27 jours** avant, 0 fausse alerte |
 | **Optimiser** le planning | Programme linéaire en nombres entiers (HiGHS) sur le tarif horaire | **-12,6 %** sur la facture des jours ouvrés, -77 kW de pointe |
+| **Effacer** la pointe du réseau (VoltEye Grid) | Prévision J+1 de 10 zones + programme linéaire de répartition des démarrages | **-10,3 MW** sur la pointe agrégée d'été (-10,9 %), -6,5 MW face à la réponse au tarif seul |
 
 Toutes les métriques sont mesurées sur des données jamais vues à l'entraînement et comparées à des
 baselines (voir [docs/resultats.md](docs/resultats.md) et la page « Évaluation » de l'application).
@@ -92,7 +93,7 @@ python tests/test_volteye.py
 | Reconnaissance IA (GAF) | Démonstration interactive : choisir une machine, une charge, un niveau de bruit et suivre la chaîne signal → image → décision |
 | Anomalies & maintenance | Alertes expliquées avec coût (TND) et CO₂, score de santé des machines à une date choisie |
 | Prévision & optimisation | Prévision J+1 contre réel, planning optimisé selon le tarif horaire |
-| Vue ville | Carte de 10 sites industriels tunisiens équipés |
+| Vue ville (VoltEye Grid) | Pointe agrégée de 10 zones industrielles, effacement coordonné, carte |
 | Évaluation des modèles | Toutes les métriques, baselines et matrices de confusion |
 
 ![Surveillance en direct](docs/captures/surveillance.jpg)
@@ -111,7 +112,8 @@ volteye/
 │   ├── forecasting.py       prévision J+1
 │   ├── anomaly.py           détection d'anomalies et maintenance prédictive
 │   ├── optimization.py      optimisation du planning (PuLP / HiGHS)
-│   ├── city.py              vue multi-sites
+│   ├── grid.py              VoltEye Grid : flexibilité multi-sites et pointe réseau
+│   ├── hipe.py              validation sur données industrielles réelles (HIPE)
 │   ├── figures.py           figures du rapport
 │   └── pipeline.py          exécution de bout en bout
 ├── app/streamlit_app.py     tableau de bord
