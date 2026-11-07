@@ -140,8 +140,24 @@ veille 0,32. Chaque heure prévue a son explication détaillée dans l'applicati
 CNN (dernier bloc convolutif) : elle montre quelles zones de l'image, donc quelles paires d'instants ou de
 rangs harmoniques, ont fait décider le réseau.
 
-**Assistant énergie.** Dix outils VoltEye (indicateurs, consommation hors production, anomalies, santé,
+**Assistant énergie.** Onze outils VoltEye (indicateurs, consommation hors production, anomalies, santé, solaire,
 prévision, planning, VoltEye Grid, évaluation, documentation, SQL en lecture seule) ; documentation indexée
 dans pgvector (modèle multilingue local, recherche hybride sémantique et plein texte). Évaluation sur 25
 questions dont la réponse est calculée par les outils : **25/25 réponses justes** et 25/25 bons outils en
 mode hors ligne (`python -m agent.evaluate`). Les mêmes outils sont exposés par un serveur MCP.
+
+## 10. Solaire en toiture (60 kWc)
+
+Modèle physique hors ligne (position du soleil, rayonnement par ciel clair, clarté mensuelle de Tunis,
+panneaux plein sud inclinés à 30°, ratio de performance 0,82), sur l'année simulée du site de référence :
+
+| Indicateur | Valeur |
+|---|---|
+| Production | 94 MWh par an, soit 1 560 kWh par kWc |
+| Autoconsommation | 80 % de la production ; 25 % des besoins du site couverts |
+| Économies | ≈ 23 900 TND par an au tarif horaire, 37 t de CO₂ évitées |
+| Achat au réseau pendant la pointe tarifaire d'été | 71 kW → 36 kW en moyenne |
+| Prévision J+1 de la production (60 derniers jours) | erreur moyenne 2,18 kW, contre 2,25 kW pour la persistance |
+
+Le solaire produit pendant la pointe tarifaire d'été : il réduit de moitié l'achat au réseau à ces heures.
+Lors d'un déploiement, une prévision météorologique de nébulosité remplacera la clarté prévue.

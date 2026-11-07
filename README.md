@@ -32,7 +32,8 @@ et des modifications d'équipements souvent certifiés. **Ce qui n'est pas mesur
 | **Détecter** les gaspillages | Consommation attendue réentraînée chaque mois + score robuste des résidus | **F1 0,82** sur 4 mois jamais vus, précision 0,87 (baseline z-score : F1 0,18) |
 | **Anticiper** les pannes | Dérive de la distorsion harmonique (THD), score de santé | panne anticipée **27 jours** avant, 0 fausse alerte |
 | **Optimiser** le planning | Programme linéaire en nombres entiers (HiGHS) sur le tarif horaire | **-12,6 %** sur la facture des jours ouvrés, -77 kW de pointe |
-| **Expliquer** et **répondre** | Grad-CAM sur les images GAF ; assistant LLM outillé (10 outils VoltEye, RAG pgvector) ; serveur MCP | **25/25** réponses justes sur le jeu d'évaluation de l'assistant |
+| **Produire** au soleil | Modèle photovoltaïque physique (60 kWc en toiture), charge nette, prévision J+1 | **80 %** d'autoconsommation, achat en pointe d'été divisé par 2 |
+| **Expliquer** et **répondre** | Grad-CAM sur les images GAF ; assistant LLM outillé (11 outils VoltEye, RAG pgvector) ; serveur MCP | **25/25** réponses justes sur le jeu d'évaluation de l'assistant |
 | **Effacer** la pointe du réseau (VoltEye Grid) | Prévision J+1 de 10 zones + programme linéaire de répartition des démarrages | **-10,3 MW** sur la pointe agrégée d'été (-10,9 %), -6,5 MW face à la réponse au tarif seul |
 
 Toutes les métriques sont mesurées sur des données jamais vues à l'entraînement et comparées à des
