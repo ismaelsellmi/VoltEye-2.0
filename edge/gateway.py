@@ -67,7 +67,9 @@ def _iso(t):
 class SimulatedSite:
     def __init__(self, hours=4):
         from volteye import stream
+        from volteye.explain import gradcam_list
         from volteye.recognition import Recognizer
+        self.gradcam = gradcam_list
         self.stream = stream
         rng = np.random.default_rng(C.SEED + 21)
         self.rng = rng
@@ -102,6 +104,7 @@ class SimulatedSite:
             diff = diff + self.rng.normal(0, 0.02 * np.abs(diff).max() + 1e-6, size=diff.shape)
             wave = diff if d > 0 else -diff
             proba = self.recognizer.predict_proba([wave])[0]
+            cam, _ = self.gradcam(self.recognizer, wave)
             classes = list(self.est)
             pred = classes[int(proba.argmax())]
             self.est[pred] = abs(d) if d > 0 else 0.0
@@ -110,7 +113,7 @@ class SimulatedSite:
                            "delta_kw": round(d, 3), "mtype": pred, "confiance": round(float(proba.max()), 4),
                            "proba": {c_: round(float(x), 4) for c_, x in zip(classes, proba)},
                            "verite": self.site[changed[0]].mtype if len(changed) else None,
-                           "waveform": [round(float(x), 3) for x in wave]})
+                           "waveform": [round(float(x), 3) for x in wave], "gradcam": cam})
         mes = {"time": _iso(now), "p_kw": round(p, 3), "q_kvar": round(m["Q_kvar"], 3), "pf": round(m["PF"], 4),
                "thd": round(m["THD"], 4), "estime": {k_: round(v, 2) for k_, v in self.est.items()},
                "verite": {inst.mtype: round(inst.p_rated * self.load[k][j], 2) for j, inst in enumerate(self.site)}}

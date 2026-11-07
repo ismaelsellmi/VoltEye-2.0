@@ -51,7 +51,8 @@ CREATE TABLE IF NOT EXISTS event (                -- démarrages et arrêts reco
     mtype       text,
     confidence  real,
     proba       jsonb,
-    waveform    real[]                         -- extrait de 40 ms (différence après - avant)
+    waveform    real[],                        -- extrait de 40 ms (différence après - avant)
+    gradcam     real[]                         -- carte Grad-CAM 32 x 32 de la décision du CNN
 );
 SELECT create_hypertable('event', 'time', chunk_time_interval => interval '7 days', if_not_exists => true);
 

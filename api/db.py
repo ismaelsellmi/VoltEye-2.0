@@ -60,6 +60,12 @@ def ensure_schema():
     return True
 
 
+def migrate():
+    """Évolutions de schéma sur une base déjà créée (idempotent)."""
+    with engine().begin() as cx:
+        cx.execute(text("ALTER TABLE event ADD COLUMN IF NOT EXISTS gradcam real[]"))
+
+
 def rows(sql, **params):
     with engine().connect() as cx:
         return [dict(r._mapping) for r in cx.execute(text(sql), params)]

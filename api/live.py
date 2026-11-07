@@ -78,11 +78,11 @@ class Hub:
                                {"time": p["time"], "m": meter, "p": p.get("p_kw"), "q": p.get("q_kvar"), "pf": p.get("pf"),
                                 "thd": p.get("thd"), "est": json.dumps(p.get("estime") or {})})
                 elif kind == "evenements":
-                    cx.execute(text("INSERT INTO event (time, meter_id, direction, delta_kw, mtype, confidence, proba, waveform) "
-                                    "VALUES (:time, :m, :d, :dk, :mt, :c, :pr, :w)"),
+                    cx.execute(text("INSERT INTO event (time, meter_id, direction, delta_kw, mtype, confidence, proba, waveform, gradcam) "
+                                    "VALUES (:time, :m, :d, :dk, :mt, :c, :pr, :w, :g)"),
                                {"time": p["time"], "m": meter, "d": p.get("direction"), "dk": p.get("delta_kw"),
                                 "mt": p.get("mtype"), "c": p.get("confiance"), "pr": json.dumps(p.get("proba") or {}),
-                                "w": p.get("waveform")})
+                                "w": p.get("waveform"), "g": p.get("gradcam")})
                 else:
                     return
             self.received += 1

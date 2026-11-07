@@ -53,6 +53,7 @@ def _clean(v):
 def seed(force=False, log=print):
     db.wait_for_db()
     db.ensure_schema()
+    db.migrate()
     eng = db.engine()
     with eng.begin() as cx:
         if not force and cx.execute(text("SELECT count(*) FROM site")).scalar():
@@ -106,7 +107,8 @@ def seed(force=False, log=print):
         grid = _load("grid.json")
         _insert(cx, "grid_day", [{"day": d["jour"], "data": json.dumps(d)} for d in grid["jours"]])
         metrics = {"reconnaissance": "recognition_metrics.json", "flux": "stream_metrics.json",
-                   "prevision": "forecast_metrics.json", "anomalies": "anomaly_metrics.json", "hipe": "hipe_metrics.json"}
+                   "prevision": "forecast_metrics.json", "anomalies": "anomaly_metrics.json", "hipe": "hipe_metrics.json",
+                   "assistant": "assistant_eval.json", "assistant_llm": "assistant_eval_llm.json"}
         docs = [{"name": k, "data": json.dumps(_load(v))} for k, v in metrics.items() if (C.ARTIFACTS / v).exists()]
         docs += [{"name": "optimisation", "data": json.dumps(opt["resume"])},
                  {"name": "grid", "data": json.dumps(grid["resume"])},
