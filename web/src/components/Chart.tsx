@@ -61,7 +61,7 @@ export function base(p: Palette): EChartsCoreOption {
       textStyle: { color: p.ink, fontFamily: "Atkinson Hyperlegible", fontSize: 13 },
       axisPointer: { type: "line", lineStyle: { color: p.ink3, type: "dashed" } },
     },
-    legend: { type: "scroll", top: 0, left: 0, right: 0, icon: "roundRect", pageTextStyle: { color: p.ink3 }, pageIconColor: p.ink2, pageIconInactiveColor: p.edge, itemWidth: 12, itemHeight: 8, textStyle: { color: p.ink2, fontSize: 12 } },
+    legend: { type: "scroll", top: 0, left: 0, right: 0, itemGap: 18, icon: "roundRect", pageTextStyle: { color: p.ink3 }, pageIconColor: p.ink2, pageIconInactiveColor: p.edge, itemWidth: 12, itemHeight: 8, textStyle: { color: p.ink2, fontSize: 12 } },
     xAxis: axis,
     yAxis: axis,
     aria: { enabled: true },
