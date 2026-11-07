@@ -1,0 +1,10 @@
+# Passerelle edge : détection d'événements et reconnaissance GAF-CNN
+# PyTorch CPU : pip install torch==2.5.1 --index-url https://download.pytorch.org/whl/cpu
+torch==2.5.1
+numpy==1.26.4
+pandas==2.3.0
+pyarrow==20.0.0
+scikit-learn==1.7.2
+joblib==1.5.1
+PyWavelets==1.8.0
+paho-mqtt==2.2.0
