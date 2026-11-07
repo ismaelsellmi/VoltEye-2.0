@@ -6,7 +6,7 @@ import json
 import sys
 import time
 
-from . import anomaly, config as C, forecasting, grid, hipe, history, optimization, recognition, stream
+from . import anomaly, config as C, forecasting, grid, hipe, history, optimization, recognition, solar, stream
 
 
 def main():
@@ -23,6 +23,7 @@ def main():
     fc, _ = forecasting.run(hist)
     anomaly.run(hist)
     opt = optimization.run(fc)
+    solar.run(hist)                # solaire en toiture : charge nette et pointe d'été
     am = json.loads((C.ARTIFACTS / "anomaly_metrics.json").read_text(encoding="utf-8"))
     grid.run(opt_summary=opt, anomaly_metrics=am)    # VoltEye Grid : 10 zones, pointe d'été
     hipe.run()                     # validation sur données réelles (si l'archive HIPE est présente)
