@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api, useApi, type Json } from "../lib/api";
@@ -8,7 +8,7 @@ import { Empty, ErrorBox, Loading, MachineName, Module, PageTitle, Table } from 
 import { LABELS, MACHINES, label } from "../lib/machines";
 import { fmtTime, nf, pct } from "../lib/format";
 
-type Gaf = { sequences: Record<string, number[]>; image: number[][][]; harmoniques: number[]; gradcam?: number[][] };
+type Gaf = { sequences: Record<string, number[]>; image: number[][][]; harmoniques: number[] };
 
 /** Image GAF couleur (canaux R, V, B = approximation, détail, harmoniques), agrandie sans lissage. */
 function GafCanvas({ image, overlay, size = 224, title }: { image: number[][][]; overlay?: number[][]; size?: number; title: string }) {
@@ -46,6 +46,7 @@ function GafCanvas({ image, overlay, size = 224, title }: { image: number[][][];
 export default function Reconnaissance() {
   const { events } = useLive();
   const [params, setParams] = useSearchParams();
+  const [showCam, setShowCam] = useState(true);
   const withWave = events.filter((e) => e.waveform && e.waveform.length === 128);
   const chosen: LiveEvent | undefined = withWave.find((e) => e.time === params.get("t")) ?? withWave[0];
   const gaf = useQuery({
@@ -136,7 +137,13 @@ export default function Reconnaissance() {
             <Module title="3 · Image GAF 32 × 32">
               {gaf.data ? (
                 <div className="flex flex-col items-center gap-3">
-                  <GafCanvas image={gaf.data.image} overlay={gaf.data.gradcam} title="Image GAF couleur fusionnée" />
+                  <GafCanvas image={gaf.data.image} overlay={showCam ? chosen.gradcam ?? undefined : undefined} title="Image GAF couleur fusionnée" />
+                  {chosen.gradcam && (
+                    <label className="flex items-center gap-2 text-sm">
+                      <input type="checkbox" checked={showCam} onChange={(e) => setShowCam(e.target.checked)} />
+                      Zones qui ont décidé (Grad-CAM)
+                    </label>
+                  )}
                   <div className="flex gap-2">
                     {["Approximation", "Détail", "Harmoniques"].map((t, i) => (
                       <figure key={t} className="text-center">

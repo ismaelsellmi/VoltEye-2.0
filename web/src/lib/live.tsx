@@ -11,6 +11,7 @@ export type LiveEvent = {
   proba: Record<string, number>;
   verite?: string | null;
   waveform?: number[] | null;
+  gradcam?: number[][] | null;
 };
 export type LinkState = "connexion" | "en direct" | "muet" | "hors ligne";
 

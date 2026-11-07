@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { api, type Json } from "../lib/api";
+import { api, useApi, type Json } from "../lib/api";
 import { Module, PageTitle } from "../components/ui";
 
 type Step = { outil: string; arguments: Json; resultat?: string };
@@ -18,7 +18,10 @@ export default function Assistant() {
   const [q, setQ] = useState("");
   const [busy, setBusy] = useState(false);
   const end = useRef<HTMLDivElement>(null);
-  useEffect(() => end.current?.scrollIntoView({ behavior: "smooth", block: "end" }), [turns]);
+  const state = useApi<{ mode: string; modele: string | null; evaluation: Json }>("/api/assistant/etat");
+  useEffect(() => {
+    end.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [turns]);
 
   const ask = async (question: string) => {
     const text = question.trim();
@@ -45,7 +48,15 @@ export default function Assistant() {
         VoltEye Grid) et cherche dans la documentation approuvée, puis cite ses sources.
       </PageTitle>
 
-      <Module title="Conversation">
+      <Module
+        title="Conversation"
+        aside={state.data && (
+          <span className="text-xs text-ink-3">
+            {state.data.mode === "llm" ? `Modèle ${state.data.modele}` : "Mode hors ligne"}
+            {state.data.evaluation && ` · ${state.data.evaluation.reponses_justes}/${state.data.evaluation.questions} réponses justes à l'évaluation`}
+          </span>
+        )}
+      >
         <div className="space-y-5">
           {!turns.length && (
             <div>

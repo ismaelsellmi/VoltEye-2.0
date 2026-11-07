@@ -7,6 +7,7 @@ const name = (k: string) => k.replace("Baseline - ", "Référence : ").replace("
 
 export default function Evaluation() {
   const { data: e, error, isLoading } = useApi<Json>("/api/evaluation");
+  const assistant = useApi<Json>("/api/assistant/etat");
   if (error) return <ErrorBox error={error} />;
   if (isLoading || !e) return <Loading height={600} />;
   const an = e.anomalies;
@@ -51,6 +52,9 @@ export default function Evaluation() {
             ])}
           />
           <p className="mt-2 text-xs text-ink-3">Test : {fmtDay(e.prevision.periode_test[0])} – {fmtDay(e.prevision.periode_test[1])}, jamais vu à l'entraînement.</p>
+          {e.prevision.quantiles && (
+            <p className="mt-1 text-sm">Fourchette P10–P90 conforme : <b className="num">{pct(e.prevision.quantiles.couverture_P10_P90)}</b> des heures réelles couvertes (cible 80 %).</p>
+          )}
         </Module>
 
         <Module title="Détection des gaspillages · test sur 4 mois jamais vus">
@@ -92,6 +96,16 @@ export default function Evaluation() {
             {gr.zones} zones, {nf(gr.usines, 0)} usines, {nf(gr.participation * 100, 0)} % de participation ; {gr.jours_evalues} jours ouvrés les plus chargés de l'été, demande réelle simulée.
           </p>
         </Module>
+
+        {assistant.data?.evaluation && (
+          <Module title="Assistant énergie">
+            <p className="text-[15px]">
+              <b className="num">{assistant.data.evaluation.reponses_justes}/{assistant.data.evaluation.questions}</b> réponses justes et{" "}
+              <b className="num">{assistant.data.evaluation.bon_outil}/{assistant.data.evaluation.questions}</b> bons outils sur le jeu de questions
+              dont la réponse est calculée par les outils VoltEye (mode {assistant.data.evaluation.mode}).
+            </p>
+          </Module>
+        )}
 
         {hp && (
           <Module title="Mesures industrielles réelles · HIPE (KIT)" className="xl:col-span-2">

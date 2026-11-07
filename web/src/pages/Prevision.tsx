@@ -27,7 +27,58 @@ function peakBands(prices: number[]) {
   return bands;
 }
 
-function ForecastModule() {
+type Shap = { importance_moyenne_kWh: Record<string, number>; heure?: { time: string; base: number; contributions: [string, number][] } };
+
+function ShapModule({ hour }: { hour: string | null }) {
+  const { data } = useApi<Shap>(hour ? `/api/prevision/explication?heure=${encodeURIComponent(hour)}` : "/api/prevision/explication");
+  if (!data) return null;
+  const imp = Object.entries(data.importance_moyenne_kWh).slice(0, 6).reverse();
+  const h = data.heure;
+  return (
+    <Module title="Pourquoi le modèle prévoit cela (SHAP)">
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div>
+          <p className="mb-1 text-sm text-ink-2">Poids moyen de chaque information dans la prévision (kWh)</p>
+          <Chart
+            label="Importance moyenne des variables de la prévision selon SHAP"
+            height={220}
+            deps={[data]}
+            option={(p) => ({
+              legend: false,
+              grid: { left: 8, right: 48, top: 4, bottom: 4 },
+              tooltip: { trigger: "item", formatter: (x: { name: string; value: number }) => `${x.name} : <b>${nf(x.value, 2)} kWh</b>` },
+              xAxis: { type: "value", show: false },
+              yAxis: { type: "category", data: imp.map(([k]) => k), axisLabel: { color: p.ink2, fontSize: 12 } },
+              series: [{ type: "bar", barWidth: 12, data: imp.map(([k, v]) => ({ value: v, name: k, itemStyle: { color: p.accent, borderRadius: [0, 4, 4, 0] } })),
+                label: { show: true, position: "right", color: p.ink2, fontFamily: "IBM Plex Mono", fontSize: 11, formatter: (x: { value: number }) => nf(x.value, 2) } }],
+            })}
+          />
+        </div>
+        <div>
+          {h ? (
+            <>
+              <p className="mb-2 text-sm text-ink-2">
+                {fmtShortDay(h.time)} à {new Date(h.time.replace(" ", "T")).getHours()} h : partant d'une moyenne de <b className="num">{nf(h.base, 1)} kWh</b>, chaque information pousse la prévision :
+              </p>
+              <ul className="space-y-1.5">
+                {h.contributions.map(([k, v]) => (
+                  <li key={k} className="grid grid-cols-[1fr_auto] items-center gap-3 text-sm">
+                    <span>{k}</span>
+                    <span className={`num font-bold ${v >= 0 ? "text-accent" : "text-ink-3"}`}>{v >= 0 ? "+" : "−"}{nf(Math.abs(v), 2)} kWh</span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : (
+            <p className="text-sm text-ink-2">Cliquez sur une heure du graphique de prévision pour voir ce qui explique cette valeur.</p>
+          )}
+        </div>
+      </div>
+    </Module>
+  );
+}
+
+function ForecastModule({ onPick }: { onPick: (t: string) => void }) {
   const { data, error, isLoading } = useApi<{ serie: ForecastPoint[]; metriques: Json }>("/api/prevision");
   const serie = data?.serie ?? [];
   const hasBand = serie.some((s) => s.p10 !== null);
@@ -40,6 +91,7 @@ function ForecastModule() {
         label="Consommation horaire réelle et prévue la veille, sur la période de test"
         height={340}
         deps={[serie.length]}
+        onClick={(x) => onPick(serie[(x as { dataIndex: number }).dataIndex].time)}
         option={(p) => ({
           tooltip: { valueFormatter: (v: number) => (v === null || v === undefined ? "–" : `${nf(v, 1)} kWh`) },
           xAxis: { type: "category", data: serie.map((s) => `${fmtShortDay(s.time)} · ${new Date(s.time).getHours()} h`), axisLabel: { formatter: (v: string) => v.split(" · ")[0] } },
@@ -59,6 +111,12 @@ function ForecastModule() {
           legend: { data: ["Réel", "Prévision VoltEye", ...(hasBand ? ["Fourchette P10–P90"] : [])] },
         })}
       />
+      {data.metriques.quantiles && (
+        <p className="mt-2 text-sm text-ink-2">
+          Fourchette P10–P90 calibrée : <b className="num">{nf(100 * data.metriques.quantiles.couverture_P10_P90, 1)} %</b> des heures réelles y
+          tombent (cible 80 %), largeur moyenne {nf(data.metriques.quantiles.largeur_moyenne_kWh, 1)} kWh.
+        </p>
+      )}
       <div className="mt-3">
         <Table
           caption="Erreurs de prévision sur la période de test"
@@ -76,6 +134,7 @@ function ForecastModule() {
 
 export default function Prevision() {
   const [day, setDay] = useState<string | null>(null);
+  const [hour, setHour] = useState<string | null>(null);
   const { data, error, isLoading } = useApi<Planning>(day ? `/api/planning?jour=${day}` : "/api/planning");
   const live = useMutation({
     mutationFn: (d: ScheduleDay) => {
@@ -102,7 +161,8 @@ export default function Prevision() {
       </PageTitle>
 
       <div className="grid gap-4">
-        <ForecastModule />
+        <ForecastModule onPick={setHour} />
+        <ShapModule hour={hour} />
 
         {error ? <ErrorBox error={error} /> : isLoading || !data || !d || !series ? <Loading height={420} /> : (
           <Module
