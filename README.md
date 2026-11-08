@@ -1,4 +1,11 @@
-# ⚡👁️ VoltEye 2.0
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="brand/volteye-logo-horizontal-inverse.svg">
+    <img src="brand/volteye-logo-horizontal.svg" alt="VoltEye" width="440">
+  </picture>
+</p>
+
+# VoltEye 2.0
 
 **See the invisible energy of smart cities.**
 *Un seul capteur. Toutes les machines. Une pointe d'été maîtrisée.*
@@ -152,6 +159,7 @@ contient. Thèmes clair et sombre, consultation hors ligne, alerte de dépasseme
 ├── docker/, docker-compose.yml
 ├── artifacts/               modèles entraînés, métriques, données de démonstration
 ├── docs/                    architecture, données, résultats, figures, captures
+├── brand/                   logo, symbole, icônes et leur générateur
 ├── scripts/                 téléchargement des données réelles
 ├── tests/                   tests unitaires, d'intégration et de l'application
 └── livrables/               rapport technique, pitch, script vidéo

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { MeterStrip } from "./MeterStrip";
+import { LogoMark } from "./Logo";
 import { applyChoice, readChoice, type ThemeChoice } from "../lib/theme";
 import { useLive } from "../lib/live";
 import { nf } from "../lib/format";
@@ -138,7 +139,7 @@ export function Layout() {
       <header className="sticky top-0 z-20 border-b border-edge bg-module/95 backdrop-blur">
         <div className="mx-auto flex max-w-[1400px] items-center gap-3 px-4 py-2">
           <NavLink to="/" className="flex shrink-0 items-center gap-2" aria-label="VoltEye, vue d'ensemble">
-            <img src="/icons/icon.svg" alt="" className="h-8 w-8" />
+            <LogoMark className="h-7 w-auto text-ink" />
             <span className="hidden font-display text-2xl font-bold uppercase tracking-wide min-[400px]:inline">VoltEye</span>
           </NavLink>
           <span className="hidden shrink-0 border-l border-edge pl-3 text-sm text-ink-2 md:block">

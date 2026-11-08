@@ -22,7 +22,8 @@ from volteye.optimization import TASKS, schedule_profile  # noqa: E402
 from volteye.recognition import Recognizer, event_waveform  # noqa: E402
 from volteye.signals import CLASSES, MACHINE_TYPES, feature_sequences, harmonic_spectrum, measurements, sample_instance, time_axis  # noqa: E402
 
-st.set_page_config(page_title="VoltEye", page_icon="⚡", layout="wide")
+BRAND = Path(__file__).resolve().parent.parent / "brand" / "png"
+st.set_page_config(page_title="VoltEye", page_icon=str(BRAND / "volteye-favicon-64.png"), layout="wide")
 A = C.ARTIFACTS
 COLORS = {m: MACHINE_TYPES[m].color for m in CLASSES}
 LABELS = {m: MACHINE_TYPES[m].label for m in CLASSES}
@@ -60,7 +61,7 @@ def fmt(x, d=0):
 
 # --- Barre latérale ----------------------------------------------------------------
 
-st.sidebar.markdown("# ⚡👁️ VoltEye")
+st.logo(str(BRAND / "volteye-logo-horizontal.png"), size="large")
 st.sidebar.caption("See the invisible energy of smart cities")
 PAGES = ["Vue d'ensemble", "Surveillance en direct", "Reconnaissance IA (GAF)", "Anomalies & maintenance",
          "Prévision & optimisation", "Vue ville", "Évaluation des modèles", "Architecture"]

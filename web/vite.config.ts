@@ -12,7 +12,7 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["icons/icon.svg"],
+      includeAssets: ["icons/icon.svg", "icons/favicon-32.png", "icons/apple-touch-icon.png"],
       manifest: {
         name: "VoltEye : énergie industrielle",
         short_name: "VoltEye",

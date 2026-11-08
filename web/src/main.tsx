@@ -11,7 +11,7 @@ import "@fontsource/ibm-plex-mono/500.css";
 import "./index.css";
 import { Layout } from "./components/Layout";
 import { LiveProvider } from "./lib/live";
-import { Loading } from "./components/ui";
+import { BrandLoader } from "./components/Logo";
 import { applyChoice, readChoice } from "./lib/theme";
 
 const Accueil = lazy(() => import("./pages/Accueil"));
@@ -31,7 +31,7 @@ createRoot(document.getElementById("root")!).render(
     <QueryClientProvider client={queryClient}>
       <LiveProvider>
         <BrowserRouter>
-          <Suspense fallback={<div className="p-6"><Loading height={320} /></div>}>
+          <Suspense fallback={<BrandLoader />}>
             <Routes>
               <Route element={<Layout />}>
                 <Route index element={<Accueil />} />

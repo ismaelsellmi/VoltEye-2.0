@@ -165,3 +165,20 @@ body {
     transition-duration: 0.001ms !important;
   }
 }
+
+/* Animation du symbole : axe, paupières, puis pupille */
+.logo-draw .logo-axis,
+.logo-draw .logo-lid {
+  stroke-dasharray: 1;
+  animation: logo-trace 0.9s ease-out both;
+}
+.logo-draw .logo-axis { animation-duration: 0.55s; }
+.logo-draw .logo-lid { animation-delay: 0.25s; }
+.logo-draw .logo-lid-lo { animation-delay: 0.55s; }
+.logo-draw .logo-pupil {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: logo-pupil 0.45s cubic-bezier(0.2, 1.6, 0.4, 1) 1.15s both;
+}
+@keyframes logo-trace { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes logo-pupil { from { transform: scale(0); } to { transform: scale(1); } }
