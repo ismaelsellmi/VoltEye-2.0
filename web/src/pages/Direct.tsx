@@ -31,7 +31,7 @@ export default function Direct() {
         de chaque machine, reconnue à chaque démarrage ou arrêt.
       </PageTitle>
 
-      <div className="grid gap-4">
+      <div className="stagger grid gap-4">
         <Module title="Mesure totale et désagrégation par machine">
           <Chart
             label="Puissance mesurée au compteur général et puissance estimée de chaque machine sur les 15 dernières minutes"
@@ -52,7 +52,7 @@ export default function Direct() {
                   step: "end",
                   symbol: "none",
                   lineStyle: { width: 0 },
-                  areaStyle: { color: p.m(m), opacity: 0.85 },
+                  areaStyle: { color: p.m(m), opacity: 0.8 },
                   itemStyle: { color: p.m(m) },
                   data: measures.map((r) => r.estime?.[m] ?? 0),
                 })),
@@ -71,7 +71,7 @@ export default function Direct() {
                 const on = (est[m] ?? 0) > 0;
                 return [
                   <MachineName m={m} />,
-                  <span className={on ? "font-bold" : "text-ink-3"}>{on ? "En marche" : "À l'arrêt"}</span>,
+                  <span className={`inline-flex items-center gap-1.5 ${on ? "font-bold" : "text-ink-3"}`}><span aria-hidden className={`h-1.5 w-1.5 rounded-full ${on ? "live-dot bg-signal" : "bg-ink-3/50"}`} />{on ? "En marche" : "À l'arrêt"}</span>,
                   <span className="num">{nf(est[m] ?? 0, 1)} kW</span>,
                   <span className="num text-ink-3">{last?.verite ? `${nf(last.verite[m] ?? 0, 1)} kW` : "–"}</span>,
                 ];
@@ -95,7 +95,7 @@ export default function Direct() {
                   </span>,
                   <span className="num">{e.confiance !== null ? pct(e.confiance, 0) : "–"}</span>,
                   e.waveform ? (
-                    <button className="text-sm text-accent hover:underline" onClick={() => navigate(`/reconnaissance?t=${encodeURIComponent(e.time)}`)}>
+                    <button className="link text-sm" onClick={() => navigate(`/reconnaissance?t=${encodeURIComponent(e.time)}`)}>
                       Signature
                     </button>
                   ) : null,

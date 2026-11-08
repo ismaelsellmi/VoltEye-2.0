@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useApi, type AnomalyDay, type HealthDay, type Json } from "../lib/api";
 import { Chart } from "../components/Chart";
+import { fade } from "../lib/chartTheme";
 import { Empty, ErrorBox, Loading, MachineDot, Module, PageTitle, Segmented, Status, Table } from "../components/ui";
 import { CAUSES, LABELS, MACHINES, TECH } from "../lib/machines";
 import { fmtDay, nf } from "../lib/format";
@@ -24,7 +25,7 @@ export default function Anomalies() {
         anormal déclenche une alerte avec sa cause, son coût et l'action à mener.
       </PageTitle>
 
-      <div className="mb-4">
+      <div className="mb-5">
         <Segmented
           ariaLabel="Machine"
           value={m}
@@ -33,7 +34,7 @@ export default function Anomalies() {
         />
       </div>
 
-      <div className="grid gap-4">
+      <div className="stagger grid gap-4">
         <Module
           title={`${LABELS[m]} · énergie journalière réelle et attendue`}
           aside={<span className="text-sm text-ink-2"><b className="num">{alerts.length}</b> alertes · <b className="num">{nf(cost, 0)}</b> TND d'excès</span>}
@@ -50,11 +51,11 @@ export default function Anomalies() {
                 dataZoom: [{ type: "inside" }],
                 series: [
                   {
-                    name: "Réelle", type: "line", symbol: "none", lineStyle: { width: 2, color: p.m(m) }, itemStyle: { color: p.m(m) },
+                    name: "Réelle", type: "line", symbol: "none", lineStyle: { width: 2, color: p.m(m) }, itemStyle: { color: p.m(m) }, areaStyle: { color: fade(p.m(m), 0.22) },
                     data: days.map((d) => d.energy_kwh),
                     markArea: proto ? {
                       silent: true,
-                      itemStyle: { color: p.grid, opacity: 0.6 },
+                      itemStyle: { color: p.grid, opacity: 1 },
                       label: { color: p.ink3, fontFamily: "IBM Plex Mono", fontSize: 11, position: "insideTop" },
                       data: [[{ name: "rodage", xAxis: days[0]?.day }, { xAxis: proto.validation[0] }], [{ name: "test (jamais vu)", xAxis: proto.test[0] }, { xAxis: days[days.length - 1]?.day }]],
                     } : undefined,
@@ -114,7 +115,7 @@ export default function Anomalies() {
                     xAxis: { type: "category", data: he.data!.map((d) => d.day), axisLabel: { formatter: (v: string) => fmtDay(v).replace(/ \d{4}$/, "") } },
                     yAxis: { type: "value", axisLabel: { formatter: (v: number) => `${nf(v * 100, 0)} %` } },
                     series: [{
-                      name: "Dérive du THD", type: "line", symbol: "none", lineStyle: { width: 2, color: p.m(m) }, itemStyle: { color: p.m(m) },
+                      name: "Dérive du THD", type: "line", symbol: "none", lineStyle: { width: 2, color: p.m(m) }, itemStyle: { color: p.m(m) }, areaStyle: { color: fade(p.m(m), 0.25) },
                       data: he.data!.map((d) => d.drift),
                       markLine: { symbol: "none", lineStyle: { color: p.critical, type: "dashed" }, label: { formatter: "seuil d'alerte +25 %", color: p.critical, fontSize: 11 }, data: [{ yAxis: 0.25 }] },
                     }],

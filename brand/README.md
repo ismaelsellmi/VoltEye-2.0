@@ -24,11 +24,29 @@ d'aucune police installée.
 
 | Nom | Valeur | Rôle |
 |---|---|---|
-| Gris armoire | `#DCDED9` (RAL 7035) | Fonds |
-| Blanc module | `#FBFBF8` | Surfaces |
 | Encre | `#1B201E` | Texte, symbole |
-| Bleu neutre | `#1D5FA6` | Actions, icône d'application |
+| Bleu neutre | `#1D5FA6` | Actions, icône d'application, aurore du fond |
 | Jaune signal | `#F2C200` | Pupille, direct, alertes : à garder rare |
+| Fond clair | `#EEF3F9` | Fond de l'application, thème clair |
+| Fond nuit | `#050A14` | Fond de l'application, thème sombre |
+
+Les machines gardent leur spectre catégoriel (validé pour les daltonismes), réservé aux données.
+
+## Interface
+
+L'application est un écran de mesure : des panneaux de verre dépoli (blanc à 60 % en clair, bleu glacier
+à 6 % en sombre, flou de 18 px, liseré clair) posés sur une aurore bleue et jaune, un graticule
+d'oscilloscope et les trois phases du courant en filigrane, parcourues par un point de mesure jaune.
+
+| Rôle | Police |
+|---|---|
+| Interface et titres | Manrope (variable) |
+| Chiffres mesurés, logotype | Barlow Condensed Bold |
+| Valeurs de tableau, horodatages | IBM Plex Mono |
+
+Mouvement : apparition en cascade des panneaux, chiffres qui se comptent, curseurs qui glissent ; tout
+s'arrête si le système demande de réduire les animations, et les panneaux deviennent opaques si la
+transparence est réduite.
 
 ## Règles
 

@@ -25,16 +25,16 @@ function ZoneMap({ zones, active, onPick }: { zones: Zone[]; active: string | nu
   const max = Math.max(...zones.map((z) => z.flexibilite_MW));
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="mx-auto block h-auto w-full max-w-[340px]" role="img" aria-label="Carte de la Tunisie et des 10 zones industrielles ; la taille des cercles est proportionnelle à la flexibilité de chaque zone">
-      <path d={d} fill="var(--module-2)" stroke="var(--edge)" strokeWidth={1} />
+      <path d={d} fill="var(--module-2)" stroke="var(--edge)" strokeWidth={1} strokeLinejoin="round" />
       {zones.map((z) => {
         const r = 4 + 12 * Math.sqrt(z.flexibilite_MW / max);
         const on = active === z.site;
         return (
           <g key={z.site} onClick={() => onPick(z.site)} className="cursor-pointer" tabIndex={0} role="button" aria-label={`${z.site} : ${nf(z.flexibilite_MW, 1)} MW de flexibilité`}
             onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onPick(z.site)}>
-            <circle cx={px(z.lon)} cy={py(z.lat)} r={r} fill="var(--accent)" fillOpacity={on ? 0.9 : 0.45} stroke="var(--module)" strokeWidth={2} />
+            <circle cx={px(z.lon)} cy={py(z.lat)} r={r} fill="var(--accent)" fillOpacity={on ? 0.95 : 0.45} stroke="var(--surface)" strokeWidth={2} className="transition-[fill-opacity] duration-200" style={on ? { filter: "drop-shadow(0 0 8px var(--accent))" } : undefined} />
             {on && (
-              <text x={px(z.lon) + r + 4} y={py(z.lat) + 4} fontSize={11} fill="var(--ink)" fontFamily="Atkinson Hyperlegible" fontWeight={700}>
+              <text x={px(z.lon) + r + 4} y={py(z.lat) + 4} fontSize={11} fill="var(--ink)" fontFamily="Manrope Variable" fontWeight={700}>
                 {z.site.replace("ZI ", "")}
               </text>
             )}
@@ -71,9 +71,9 @@ export default function Grid() {
         l'énergie consommée.
       </PageTitle>
 
-      <div className="grid gap-4">
+      <div className="stagger grid gap-4">
         <Module title={`Pointe agrégée moyenne · ${s.jours_evalues} jours ouvrés les plus chargés`}>
-          <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             <Stat value={nf(pm.pratique_actuelle, 1)} unit="MW" caption="pratique actuelle" />
             <Stat value={nf(pm.tarif_seul, 1)} unit="MW" caption="chaque usine suit le tarif seule : la pointe se déplace" />
             <Stat value={nf(pm.voltEye_grid, 1)} unit="MW" caption="démarrages coordonnés par VoltEye Grid" tone="good" />
@@ -87,7 +87,7 @@ export default function Grid() {
             aside={
               <label className="flex items-center gap-2 text-sm">
                 Jour
-                <select className="rounded border border-edge bg-module-2 px-2 py-1" value={current ?? ""} onChange={(e) => setDay(e.target.value)}>
+                <select className="field" value={current ?? ""} onChange={(e) => setDay(e.target.value)}>
                   {idx.data.jours.map((j) => <option key={j} value={j}>{fmtDay(j)}</option>)}
                 </select>
               </label>
@@ -140,7 +140,7 @@ export default function Grid() {
                 {active && (() => {
                   const z = idx.data!.zones.find((x) => x.site === active)!;
                   return (
-                    <dl className="mt-3 grid grid-cols-2 gap-2 rounded-md bg-module-2 p-3 text-sm">
+                    <dl className="pop mt-3 grid grid-cols-2 gap-2 rounded-2xl border border-edge bg-module-2 p-3.5 text-sm">
                       <dt className="text-ink-2">Zone</dt><dd className="font-bold">{z.site}</dd>
                       <dt className="text-ink-2">Secteur</dt><dd>{z.secteur} · {z.usines} usines</dd>
                       <dt className="text-ink-2">Pointe</dt><dd className="num">{nf(z.pointe_MW, 1)} MW</dd>

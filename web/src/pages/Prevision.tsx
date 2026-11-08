@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { api, useApi, type ForecastPoint, type Json, type ScheduleDay, type Task } from "../lib/api";
 import { Chart } from "../components/Chart";
+import { fade } from "../lib/chartTheme";
 import { ErrorBox, Loading, Module, PageTitle, Stat, Table } from "../components/ui";
 import { fmtDay, fmtShortDay, nf } from "../lib/format";
 
@@ -106,7 +107,7 @@ function ForecastModule({ onPick }: { onPick: (t: string) => void }) {
                 ]
               : []),
             { name: "Réel", type: "line", symbol: "none", lineStyle: { width: 2, color: p.ink }, itemStyle: { color: p.ink }, data: serie.map((s) => s.actual) },
-            { name: "Prévision VoltEye", type: "line", symbol: "none", lineStyle: { width: 2, color: p.accent }, itemStyle: { color: p.accent }, data: serie.map((s) => s.p50) },
+            { name: "Prévision VoltEye", type: "line", symbol: "none", lineStyle: { width: 2, color: p.accent, shadowColor: p.accent, shadowBlur: 6 }, itemStyle: { color: p.accent }, data: serie.map((s) => s.p50) },
           ],
           legend: { data: ["Réel", "Prévision VoltEye", ...(hasBand ? ["Fourchette P10–P90"] : [])] },
         })}
@@ -147,7 +148,7 @@ function SolarModule() {
   const w = s.semaine_ete;
   return (
     <Module title={`Solaire en toiture · ${s.installation.kWc} kWc`}>
-      <div className="mb-4 grid grid-cols-2 gap-6 md:grid-cols-4">
+      <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-4">
         <Stat value={nf(s.production_MWh_an, 0)} unit="MWh/an" caption={`${nf(s.productible_kWh_kWc, 0)} kWh par kWc installé`} />
         <Stat value={`${nf(s["autoconsommation_%"], 0)} %`} caption={`autoconsommés ; ${nf(s["autoproduction_%"], 0)} % des besoins couverts`} />
         <Stat value={nf(s.economie_TND_an, 0)} unit="TND/an" caption={`et ${nf(s.co2_evite_t_an, 1)} t de CO₂ évitées`} tone="good" />
@@ -162,7 +163,7 @@ function SolarModule() {
           xAxis: { type: "category", data: w.time.map((t) => `${fmtShortDay(t)} · ${new Date(t).getHours()} h`), axisLabel: { formatter: (v: string) => v.split(" · ")[0], interval: 23 } },
           yAxis: { type: "value", name: "kW", min: 0 },
           series: [
-            { name: "Production solaire", type: "line", symbol: "none", lineStyle: { width: 0 }, areaStyle: { color: p.signal, opacity: 0.45 }, itemStyle: { color: p.signal }, data: w.pv_kW },
+            { name: "Production solaire", type: "line", symbol: "none", lineStyle: { width: 0 }, areaStyle: { color: fade(p.signal, 0.55) }, itemStyle: { color: p.signal }, data: w.pv_kW },
             { name: "Consommation du site", type: "line", symbol: "none", lineStyle: { width: 1.5, color: p.ink3 }, itemStyle: { color: p.ink3 }, data: w.charge_kW },
             { name: "Achat au réseau", type: "line", symbol: "none", lineStyle: { width: 2, color: p.accent }, itemStyle: { color: p.accent }, data: w.achat_reseau_kW },
           ],
@@ -204,7 +205,7 @@ export default function Prevision() {
         attendre (cuissons, air comprimé, recharges) aux heures les moins chères, sans dépasser la puissance souscrite.
       </PageTitle>
 
-      <div className="grid gap-4">
+      <div className="stagger grid gap-4">
         <ForecastModule onPick={setHour} />
         <ShapModule hour={hour} />
         <SolarModule />
@@ -215,13 +216,13 @@ export default function Prevision() {
             aside={
               <label className="flex items-center gap-2 text-sm">
                 Jour
-                <select className="rounded border border-edge bg-module-2 px-2 py-1" value={d.jour} onChange={(e) => { setDay(e.target.value); live.reset(); }}>
+                <select className="field" value={d.jour} onChange={(e) => { setDay(e.target.value); live.reset(); }}>
                   {data.jours.map((j) => <option key={j} value={j}>{fmtDay(j)}</option>)}
                 </select>
               </label>
             }
           >
-            <div className="mb-4 grid grid-cols-2 gap-6 md:grid-cols-4">
+            <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-4">
               <Stat value={nf(d.facture_ref_TND, 0)} unit="TND" caption={`pratique actuelle · pointe ${nf(d.pointe_ref_kW, 0)} kW`} />
               {d.facture_operateur_TND !== undefined && <Stat value={nf(d.facture_operateur_TND, 0)} unit="TND" caption={`opérateur averti du tarif · pointe ${nf(d.pointe_operateur_kW, 0)} kW`} />}
               <Stat value={nf(d.facture_opt_TND, 0)} unit="TND" caption={`planning VoltEye · pointe ${nf(d.pointe_opt_kW, 0)} kW`} tone="good" />
@@ -241,7 +242,7 @@ export default function Prevision() {
                     markArea: { silent: true, itemStyle: { color: p.signal, opacity: 0.14 }, label: { color: p.ink3, fontSize: 11, fontFamily: "IBM Plex Mono" }, data: series.bands.map(([a, b]) => [{ name: "pointe tarifaire", xAxis: `${a} h` }, { xAxis: `${Math.min(b, 23)} h` }]) },
                   },
                   ...(series.operateur ? [{ name: "Opérateur averti", type: "line", step: "end", symbol: "none", lineStyle: { width: 2, type: "dashed", color: p.ink2 }, itemStyle: { color: p.ink2 }, data: series.operateur }] : []),
-                  { name: "Planning VoltEye", type: "line", step: "end", symbol: "none", lineStyle: { width: 3, color: p.accent }, itemStyle: { color: p.accent }, data: series.voltEye },
+                  { name: "Planning VoltEye", type: "line", step: "end", symbol: "none", lineStyle: { width: 3, color: p.accent }, itemStyle: { color: p.accent }, areaStyle: { color: fade(p.accent, 0.18) }, data: series.voltEye },
                 ],
               })}
             />
@@ -257,7 +258,7 @@ export default function Prevision() {
               />
             </div>
             <div className="mt-4 flex flex-wrap items-center gap-3">
-              <button onClick={() => live.mutate(d)} disabled={live.isPending} className="rounded-md bg-accent px-4 py-2 font-bold text-accent-ink disabled:opacity-60">
+              <button onClick={() => live.mutate(d)} disabled={live.isPending} className="btn-primary">
                 {live.isPending ? "Optimisation…" : "Relancer l'optimiseur sur ce jour"}
               </button>
               {live.data && (

@@ -23,7 +23,7 @@ export default function Evaluation() {
         résultats ci-dessous sont produits par le code du dépôt (<span className="num">python -m volteye.pipeline</span>).
       </PageTitle>
 
-      <div className="grid gap-4 xl:grid-cols-2">
+      <div className="stagger grid gap-4 xl:grid-cols-2">
         <Module title="Reconnaissance des machines · formes d'onde simulées">
           <Table
             head={["Approche", "Exactitude", "Bruit × 3", "ms / événement"]}

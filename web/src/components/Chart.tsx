@@ -14,59 +14,13 @@ import {
 } from "echarts/components";
 import { CanvasRenderer } from "echarts/renderers";
 import type { EChartsCoreOption } from "echarts/core";
-import { token, useResolvedTheme } from "../lib/theme";
+import { useResolvedTheme } from "../lib/theme";
+import { base, palette, type Palette } from "../lib/chartTheme";
 
 echarts.use([
   BarChart, LineChart, CustomChart, HeatmapChart, GridComponent, TooltipComponent, LegendComponent, MarkLineComponent,
   MarkAreaComponent, MarkPointComponent, DataZoomComponent, VisualMapComponent, AriaComponent, CanvasRenderer,
 ]);
-
-/** Couleurs du thème courant, résolues pour le canvas. */
-export function palette() {
-  return {
-    ink: token("--ink"),
-    ink2: token("--ink-2"),
-    ink3: token("--ink-3"),
-    grid: token("--grid"),
-    module: token("--module"),
-    edge: token("--edge"),
-    accent: token("--accent"),
-    signal: token("--signal"),
-    good: token("--good"),
-    warning: token("--warning"),
-    critical: token("--critical"),
-    m: (k: string) => token(`--m-${k}`),
-  };
-}
-export type Palette = ReturnType<typeof palette>;
-
-/** Réglages communs : axes et grille discrets, infobulle au survol, typographie de l'interface. */
-export function base(p: Palette): EChartsCoreOption {
-  const axis = {
-    axisLine: { lineStyle: { color: p.edge } },
-    axisTick: { show: false },
-    axisLabel: { color: p.ink3, fontFamily: "IBM Plex Mono", fontSize: 11 },
-    splitLine: { lineStyle: { color: p.grid } },
-    nameTextStyle: { color: p.ink3, fontFamily: "IBM Plex Mono", fontSize: 11 },
-  };
-  return {
-    backgroundColor: "transparent",
-    animationDuration: 400,
-    textStyle: { fontFamily: "Atkinson Hyperlegible", color: p.ink2 },
-    grid: { left: 8, right: 16, top: 44, bottom: 8, containLabel: true },
-    tooltip: {
-      trigger: "axis",
-      backgroundColor: p.module,
-      borderColor: p.edge,
-      textStyle: { color: p.ink, fontFamily: "Atkinson Hyperlegible", fontSize: 13 },
-      axisPointer: { type: "line", lineStyle: { color: p.ink3, type: "dashed" } },
-    },
-    legend: { type: "scroll", top: 0, left: 0, right: 0, itemGap: 18, icon: "roundRect", pageTextStyle: { color: p.ink3 }, pageIconColor: p.ink2, pageIconInactiveColor: p.edge, itemWidth: 12, itemHeight: 8, textStyle: { color: p.ink2, fontSize: 12 } },
-    xAxis: axis,
-    yAxis: axis,
-    aria: { enabled: true },
-  };
-}
 
 type Props = {
   option: (p: Palette) => EChartsCoreOption;

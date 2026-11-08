@@ -18,7 +18,7 @@ export function MeterStrip({ compact = false }: { compact?: boolean }) {
   const { measures, state, last } = useLive();
   useResolvedTheme();
   const W = 600;
-  const H = compact ? 36 : 56;
+  const H = compact ? 32 : 44;
   const recent = measures.slice(-300);
 
   const paths = useMemo(() => {
@@ -42,24 +42,24 @@ export function MeterStrip({ compact = false }: { compact?: boolean }) {
 
   const live = state === "en direct";
   return (
-    <Link to="/direct" className="group flex min-w-0 flex-1 items-center gap-3 rounded-md px-2 py-1 hover:bg-module-2" aria-label="Ouvrir le direct">
+    <Link to="/direct" className="group flex min-w-0 flex-1 items-center justify-end gap-3 rounded-xl px-2 py-1 transition-colors hover:bg-module-2" aria-label={`Ouvrir le direct : ${last ? `${nf(last.p_kw, 1)} kW` : "pas de mesure"}, ${STATE_TEXT[state].toLowerCase()}`}>
       <div className="hidden min-w-0 flex-1 sm:block">
         <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="block w-full" style={{ height: H }} aria-hidden>
           <line x1="0" x2={W} y1={H - 0.5} y2={H - 0.5} stroke={token("--edge")} />
           {paths?.layers.map((l) => (
-            <path key={l.m} d={l.d} fill={`var(--m-${l.m})`} opacity={0.85} />
+            <path key={l.m} d={l.d} fill={`var(--m-${l.m})`} opacity={0.78} />
           ))}
           {paths && <path d={paths.total} fill="none" stroke="var(--ink)" strokeWidth={1.5} vectorEffect="non-scaling-stroke" />}
         </svg>
       </div>
-      <div className="flex shrink-0 items-baseline gap-3">
-        <span className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-ink-3">
+      <div className="flex shrink-0 items-center gap-3">
+        <span className="flex items-center gap-1.5 rounded-full border border-edge bg-module-2 p-1.5 text-[11px] font-bold uppercase tracking-[0.08em] text-ink-2 min-[480px]:px-2 min-[480px]:py-1">
           <span aria-hidden className={`inline-block h-2 w-2 rounded-full ${live ? "live-dot bg-signal" : state === "hors ligne" ? "bg-critical" : "bg-ink-3"}`} />
-          {STATE_TEXT[state]}
+          <span className="hidden min-[480px]:inline">{STATE_TEXT[state]}</span>
         </span>
-        <span className="reading text-3xl sm:text-4xl">
+        <span className="reading text-[30px] sm:text-[34px]">
           {last ? nf(last.p_kw, 1) : "–"}
-          <span className="ml-1 font-sans text-sm font-normal text-ink-3">kW</span>
+          <span className="ml-1 font-sans text-sm font-semibold tracking-normal text-ink-3">kW</span>
         </span>
       </div>
     </Link>

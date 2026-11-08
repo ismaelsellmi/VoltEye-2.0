@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api, useApi, type Json } from "../lib/api";
 import { useLive, type LiveEvent } from "../lib/live";
 import { Chart } from "../components/Chart";
+import { fade } from "../lib/chartTheme";
 import { Empty, ErrorBox, Loading, MachineName, Module, PageTitle, Table } from "../components/ui";
 import { LABELS, MACHINES, label } from "../lib/machines";
 import { fmtTime, nf, pct } from "../lib/format";
@@ -40,7 +41,7 @@ function GafCanvas({ image, overlay, size = 224, title }: { image: number[][][];
         }
     }
   }, [image, overlay]);
-  return <canvas ref={ref} title={title} aria-label={title} role="img" style={{ width: size, height: size, imageRendering: "pixelated" }} className="rounded border border-edge" />;
+  return <canvas ref={ref} title={title} aria-label={title} role="img" style={{ width: size, height: size, imageRendering: "pixelated" }} className="rounded-lg border border-edge" />;
 }
 
 export default function Reconnaissance() {
@@ -71,13 +72,13 @@ export default function Reconnaissance() {
       {!chosen ? (
         <Empty title="Aucun événement à analyser">Les événements reconnus par la passerelle arrivent ici dès qu'une machine démarre ou s'arrête.</Empty>
       ) : (
-        <div className="grid gap-4">
+        <div className="stagger grid gap-4">
           <Module title="Événement analysé">
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
               <label className="flex items-center gap-2 text-sm">
                 Événement
                 <select
-                  className="rounded border border-edge bg-module-2 px-2 py-1"
+                  className="field"
                   value={chosen.time}
                   onChange={(e) => setParams({ t: e.target.value })}
                 >
@@ -107,7 +108,7 @@ export default function Reconnaissance() {
                   xAxis: { type: "category", data: chosen.waveform!.map((_, i) => nf((i / 3200) * 1000, 1)), name: "ms", axisLabel: { interval: 31 } },
                   yAxis: { type: "value", name: "A" },
                   tooltip: { valueFormatter: (v: number) => `${nf(v, 2)} A` },
-                  series: [{ type: "line", symbol: "none", data: chosen.waveform, lineStyle: { width: 2, color: p.m(chosen.mtype ?? "four") }, itemStyle: { color: p.m(chosen.mtype ?? "four") } }],
+                  series: [{ type: "line", symbol: "none", data: chosen.waveform, lineStyle: { width: 2, color: p.m(chosen.mtype ?? "four") }, itemStyle: { color: p.m(chosen.mtype ?? "four") }, areaStyle: { color: fade(p.m(chosen.mtype ?? "four"), 0.18), origin: 0 } }],
                 })}
               />
             </Module>
@@ -169,8 +170,8 @@ export default function Reconnaissance() {
                   xAxis: { type: "value", max: 1, show: false },
                   yAxis: { type: "category", data: proba.map((x) => LABELS[x.m]), axisLabel: { color: p.ink2, fontSize: 12 } },
                   series: [{
-                    type: "bar", barWidth: 12,
-                    data: proba.map((x) => ({ value: x.p, name: LABELS[x.m], itemStyle: { color: p.m(x.m), borderRadius: [0, 4, 4, 0] } })),
+                    type: "bar", barWidth: 12, showBackground: true, backgroundStyle: { color: p.grid, borderRadius: 6 },
+                    data: proba.map((x) => ({ value: x.p, name: LABELS[x.m], itemStyle: { color: p.m(x.m), borderRadius: 6 } })),
                     label: { show: true, position: "right", color: p.ink2, fontFamily: "IBM Plex Mono", fontSize: 11, formatter: (x: { value: number }) => (x.value >= 0.01 ? pct(x.value, 0) : "") },
                   }],
                 })}
