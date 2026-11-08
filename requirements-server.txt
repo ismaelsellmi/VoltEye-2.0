@@ -18,3 +18,14 @@ PyWavelets==1.8.0
 anthropic==2.6.0
 fastembed==0.9.1
 mcp==2.3.0
+# Dépendances transitives figées : résolution rapide et reproductible
+starlette==1.7.0
+httpx2==2.14.0
+httpcore2==2.14.0
+mcp-types==2.3.0
+sse-starlette==3.5.1
+opentelemetry-api==1.45.2
+anyio==4.16.0
+onnxruntime==1.23.2
+tokenizers==0.21.2
+huggingface-hub==0.36.2
