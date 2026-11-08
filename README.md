@@ -67,52 +67,147 @@ reste sur la passerelle. Détails : [docs/architecture.md](docs/architecture.md)
 
 ![Chaîne de reconnaissance](docs/figures/fig_gaf_pipeline.png)
 
-## Démarrage rapide
+## Installation et lancement
 
-Prérequis : Docker. Base TimescaleDB, broker MQTT, API, passerelle edge et application web en une commande :
+Toute la plateforme (base TimescaleDB, broker MQTT, API, passerelle edge, application web) démarre avec
+Docker, sans rien installer d'autre. Les données de démonstration et les modèles entraînés sont fournis dans
+`artifacts/` : la base se remplit seule au premier démarrage.
+
+### 1. Prérequis
+
+| Outil | Version | Pour |
+|---|---|---|
+| [Git](https://git-scm.com/downloads) | récente | récupérer le dépôt |
+| [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Windows, macOS) ou Docker Engine + Compose v2 (Linux) | Compose v2 | lancer la plateforme |
+| Python | 3.10 à 3.12 | développement Python uniquement |
+| Node.js | 22 | développement de l'application web uniquement |
+
+Prévoir environ 10 Go d'espace disque pour les images Docker.
+
+### 2. Récupérer le dépôt
 
 ```bash
-docker compose up --build
+git clone https://github.com/ismaelsellmi/VoltEye-2.0.git
+cd VoltEye-2.0
 ```
 
-- **Application VoltEye** : http://localhost:8080 (installable sur téléphone et ordinateur)
-- **API** et documentation interactive : http://localhost:8000/docs
-- Direct en WebSocket : `ws://localhost:8000/ws/direct`
-- Rejeu d'une journée réelle de l'usine HIPE : `docker compose --profile hipe up --build`
-- Serveur MCP en HTTP : `docker compose --profile mcp up --build mcp` (http://localhost:8765/mcp)
+Le dépôt est privé : acceptez d'abord l'invitation de collaborateur reçue par e-mail depuis GitHub.
 
-La base est remplie automatiquement au premier démarrage à partir de `artifacts/`.
+### 3. Configurer l'assistant (facultatif)
+
+```bash
+cp .env.example .env            # PowerShell : Copy-Item .env.example .env
+```
+
+Renseignez `ANTHROPIC_API_KEY` dans `.env` pour activer l'assistant en mode LLM. Sans clé, l'assistant
+fonctionne en mode hors ligne : il appelle les mêmes outils VoltEye et répond à partir de leurs résultats.
+Le fichier `.env` n'est jamais commité.
+
+### 4. Lancer
+
+```bash
+docker compose up --build -d
+```
+
+Le premier lancement construit les images et télécharge une fois les dépendances et le modèle de
+plongements de l'assistant (10 à 15 minutes selon la connexion) ; les lancements suivants prennent quelques
+secondes.
+
+| Service | Adresse |
+|---|---|
+| **Application VoltEye** (installable sur téléphone et ordinateur) | http://localhost:8080 |
+| API et documentation interactive | http://localhost:8000/docs |
+| Direct en WebSocket | `ws://localhost:8000/ws/direct` |
+| Base TimescaleDB (utilisateur, mot de passe et base : `volteye`) | `localhost:55432` |
+| Broker MQTT | `localhost:11883` |
+
+### Commandes utiles
+
+| Commande | Rôle |
+|---|---|
+| `docker compose ps` | État des services |
+| `docker compose logs -f api` | Journal de l'API (ou `edge`, `web`, `db`) |
+| `git pull` puis `docker compose up --build -d` | Passer à la dernière version |
+| `docker compose down` | Tout arrêter (les données sont conservées) |
+| `docker compose down -v` | Arrêter et vider la base : elle est rechargée depuis `artifacts/` au prochain lancement |
+| `docker compose --profile hipe up --build -d` | Ajouter le rejeu d'une journée réelle de l'usine HIPE |
+| `docker compose --profile mcp up --build -d mcp` | Serveur MCP en HTTP sur http://localhost:8765/mcp |
+
+### En cas de souci
+
+- **Port déjà utilisé** (8080, 8000, 55432 ou 11883) : arrêtez le programme qui l'occupe, ou changez le port
+  de gauche dans `docker-compose.yml` (par exemple `"8081:80"` pour l'application).
+- **« Passerelle muette » ou « Hors ligne » dans l'en-tête** : la passerelle edge n'envoie pas de mesures.
+  Vérifiez `docker compose ps`, puis `docker compose restart edge`.
+- **Docker Desktop s'arrête pendant le premier build** : relancez Docker Desktop puis la même commande ; les
+  étapes déjà terminées sont reprises depuis le cache.
+- **L'application affiche une ancienne version** : rechargez la page deux fois (l'application est installable et
+  se met à jour en arrière-plan) ou videz le cache du site.
 
 ## Développement
 
-Python 3.10 à 3.12 :
+Pour modifier le code avec rechargement à chaud, la base et le broker restent dans Docker et le reste tourne
+sur la machine.
+
+### Environnement Python
 
 ```bash
 python -m venv .venv
-# Windows : .venv\Scripts\activate     Linux / macOS : source .venv/bin/activate
+# Windows (PowerShell) : .venv\Scripts\Activate.ps1      Linux / macOS : source .venv/bin/activate
 pip install torch==2.5.1 --index-url https://download.pytorch.org/whl/cpu
 pip install -r requirements.txt -r requirements-server.txt
 ```
+
+Sous VS Code, l'interpréteur `.venv` est sélectionné automatiquement et deux configurations de lancement
+sont prêtes (`VoltEye : tableau de bord`, `VoltEye : pipeline complet`).
+
+### Lancer les briques une par une
+
+```bash
+docker compose up -d db mqtt          # base et broker
+uvicorn api.main:app --reload         # API sur http://localhost:8000
+python -m edge.gateway                # passerelle edge simulée (autre terminal)
+cd web && npm ci && npm run dev       # application web sur http://localhost:5173 (autre terminal)
+```
+
+L'application web de développement relaie `/api` et `/ws` vers l'API locale (variable `VOLTEYE_API` pour en
+viser une autre). En développement, la clé de l'assistant se passe par variable d'environnement :
+`$env:ANTHROPIC_API_KEY="..."` (PowerShell) ou `export ANTHROPIC_API_KEY=...` (bash).
+
+### Autres commandes
 
 | Commande | Rôle |
 |---|---|
 | `python -m volteye.pipeline` | Tout régénérer : données, entraînement, évaluation, figures (environ 3 minutes) |
 | `python scripts/telecharger_hipe.py` | Télécharger la semaine de mesures réelles HIPE (109 Mo) avant le pipeline |
-| `docker compose up -d db mqtt` puis `uvicorn api.main:app --reload` | API locale sur la base Docker |
-| `python -m edge.gateway` | Passerelle edge simulée (MQTT) |
-| `cd web && npm install && npm run dev` | Application web avec rechargement à chaud |
 | `python -m agent.evaluate` | Évaluer l'assistant énergie sur 25 questions |
 | `python -m agent.mcp_server` | Serveur MCP en transport stdio |
 | `streamlit run app/streamlit_app.py` | Tableau de bord Streamlit |
-| `python -m pytest tests` | Tests (les tests de l'API utilisent la base Docker) |
+| `python -m pytest tests` | Tests Python (les tests de l'API utilisent la base Docker : `docker compose up -d db`) |
+| `cd web && npx eslint src && npm run build` | Vérifications de l'application web |
 
-L'assistant fonctionne en mode LLM (fournisseur configurable) avec une clé d'API dans `.env` (voir `.env.example`) ; sans clé,
-un aiguillage hors ligne appelle les mêmes outils. Configuration type d'un client MCP de bureau :
+Configuration type d'un client MCP de bureau :
 
 ```json
 { "mcpServers": { "volteye": { "command": "python", "args": ["-m", "agent.mcp_server"],
   "env": { "DATABASE_URL": "postgresql+psycopg://volteye:volteye@127.0.0.1:55432/volteye" } } } }
 ```
+
+### Contribuer
+
+`main` est la branche stable. Pour chaque modification :
+
+```bash
+git checkout main && git pull
+git checkout -b ma-modification
+# ... modifications, puis :
+git add -A && git commit -m "Description de la modification"
+git push -u origin ma-modification
+```
+
+Ouvrez ensuite une pull request vers `main` sur GitHub. L'intégration continue lance les tests Python, les
+tests de l'API sur TimescaleDB et la vérification de l'application web à chaque push : la pull request se
+fusionne quand les trois sont au vert.
 
 ## L'application
 
@@ -128,7 +223,9 @@ un aiguillage hors ligne appelle les mêmes outils. Configuration type d'un clie
 | Évaluation | Toutes les métriques, protocoles et méthodes de référence |
 
 La bande du compteur, en haut de chaque page, montre en permanence la mesure unique et les machines qu'elle
-contient. Thèmes clair et sombre, consultation hors ligne, alerte de dépassement de puissance par notification.
+contient. `Ctrl K` (`⌘ K` sur Mac) ouvre la palette de commandes : aller à une page, changer de thème ou poser
+directement une question à l'assistant. Interface en verre dépoli, thèmes clair et sombre, navigation mobile,
+consultation hors ligne, alerte de dépassement de puissance par notification.
 
 ![Direct : la mesure unique et sa désagrégation](docs/captures/app_direct.png)
 
@@ -165,17 +262,17 @@ contient. Thèmes clair et sombre, consultation hors ligne, alerte de dépasseme
 └── livrables/               rapport technique, pitch, script vidéo
 ```
 
-## Données, hypothèses et perspectives
+## Données et perspectives
 
 Le règlement autorise les données simulées. VoltEye combine un **simulateur physique** documenté (formes
 d'onde de 7 types de machines à 3,2 kHz, atelier à 1 mesure par seconde, un an d'historique horaire avec le
 calendrier tunisien et la température de Tunis, anomalies étiquetées) et une **semaine de mesures réelles**
-d'une usine allemande (HIPE, KIT). Sources, prétraitements et hypothèses : [docs/donnees.md](docs/donnees.md).
+d'une usine allemande (HIPE, KIT). Sources, prétraitements et paramètres : [docs/donnees.md](docs/donnees.md).
 
-Hypothèses à confirmer avec la STEG et l'ANME : grille tarifaire industrielle, facteur d'émission du réseau,
-taux de participation des usines à l'effacement. Perspectives : pilote de 4 semaines sur un atelier tunisien
-avec compteurs de référence, distinction des machines identiques par le contexte de production, pilotage
-automatique des charges flexibles en lien avec le distributeur.
+Prochaines étapes : pilote de 4 semaines sur un atelier tunisien avec compteurs de référence, calibrage de la
+grille tarifaire industrielle, du facteur d'émission et du taux de participation à l'effacement avec la STEG
+et l'ANME, reconnaissance enrichie par le contexte de production, pilotage automatique des charges flexibles
+en lien avec le distributeur.
 
 ## Références
 

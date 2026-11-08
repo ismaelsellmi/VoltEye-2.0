@@ -27,8 +27,8 @@ export default function Direct() {
   return (
     <>
       <PageTitle kicker="Compteur général · 1 mesure par seconde · 15 dernières minutes" title="Direct">
-        La courbe noire est la seule mesure disponible. Les couleurs dessous sont ce que VoltEye en déduit : la puissance
-        de chaque machine, reconnue à chaque démarrage ou arrêt.
+        La courbe « Mesure totale » est la seule mesure disponible. Les couleurs dessous sont ce que VoltEye en déduit :
+        la puissance de chaque machine, reconnue à chaque démarrage ou arrêt.
       </PageTitle>
 
       <div className="stagger grid gap-4">
@@ -62,7 +62,7 @@ export default function Direct() {
           />
         </Module>
 
-        <div className="grid gap-4 xl:grid-cols-[2fr_3fr]">
+        <div className="grid gap-4 2xl:grid-cols-[2fr_3fr]">
           <Module title={`Machines en marche : ${running.length} sur ${MACHINES.length}`}>
             <Table
               caption="État estimé de chaque machine"
