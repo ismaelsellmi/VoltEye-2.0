@@ -1,4 +1,4 @@
-"""Figures du rapport technique (docs/figures/*.png), générées à partir des artefacts."""
+"""Figures des résultats (docs/figures/*.png), générées à partir des artefacts."""
 import json
 
 import matplotlib

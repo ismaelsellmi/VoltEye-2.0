@@ -15,7 +15,7 @@ d'oscilloscope. La pupille jaune est le point de mesure unique.
 | `volteye-symbole-simple.svg` | Petites tailles (sans ondulation, traits épais) |
 | `volteye-icone.svg`, `volteye-icone-masquable.svg` | Icônes d'application (fond bleu) |
 | `volteye-favicon.svg` | Favicon (tracé simplifié, lisible à 16 px) |
-| `png/` | Exports PNG prêts à l'emploi (présentations, rapport, Streamlit) |
+| `png/` | Exports PNG prêts à l'emploi (présentations, documents) |
 
 Le mot VOLTEYE est vectorisé depuis Barlow Condensed Bold (licence SIL OFL) : les fichiers ne dépendent
 d'aucune police installée.

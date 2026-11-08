@@ -2,13 +2,10 @@
 .github
 .venv
 .vscode
-.claude
 data
 web/node_modules
 web/dist
-livrables
 docs/figures
 docs/captures
 **/__pycache__
 *.pyc
-.pytest_cache

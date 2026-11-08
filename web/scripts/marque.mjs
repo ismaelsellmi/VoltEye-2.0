@@ -23,7 +23,7 @@ render("volteye-icone-masquable.svg", new URL("apple-touch-icon.png", icons), 18
 render("volteye-favicon.svg", new URL("favicon-32.png", icons), 32);
 copyFileSync(new URL("volteye-favicon.svg", brand), new URL("icon.svg", icons));
 
-// Fichiers de marque prêts à l'emploi (présentations, rapport, Streamlit)
+// Fichiers de marque prêts à l'emploi (présentations, documents)
 render("volteye-symbole.svg", new URL("volteye-symbole.png", png), 1024);
 render("volteye-symbole-inverse.svg", new URL("volteye-symbole-inverse.png", png), 1024);
 render("volteye-logo-horizontal.svg", new URL("volteye-logo-horizontal.png", png), 1600);

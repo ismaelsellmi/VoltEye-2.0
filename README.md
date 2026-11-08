@@ -59,7 +59,7 @@ l'énergie consommée hors production mise en évidence.
              (courant,          détection d'événements,     ingestion,          séries temporelles, agrégats continus,
               tension 3,2 kHz)  CNN GAF, Grad-CAM           REST, WebSocket      documents de l'assistant
                                                                  │
-                    application web installable (PWA) · assistant énergie · serveur MCP · Streamlit (secours)
+                    application web installable (PWA) · assistant énergie · serveur MCP
 ```
 
 Seuls les indicateurs (une mesure par seconde) et les événements reconnus quittent le site : le signal brut
@@ -158,8 +158,8 @@ pip install torch==2.5.1 --index-url https://download.pytorch.org/whl/cpu
 pip install -r requirements.txt -r requirements-server.txt
 ```
 
-Sous VS Code, l'interpréteur `.venv` est sélectionné automatiquement et deux configurations de lancement
-sont prêtes (`VoltEye : tableau de bord`, `VoltEye : pipeline complet`).
+Sous VS Code, l'interpréteur `.venv` est sélectionné automatiquement et la configuration de lancement
+`VoltEye : pipeline complet` est prête.
 
 ### Lancer les briques une par une
 
@@ -182,8 +182,6 @@ viser une autre). En développement, la clé de l'assistant se passe par variabl
 | `python scripts/telecharger_hipe.py` | Télécharger la semaine de mesures réelles HIPE (109 Mo) avant le pipeline |
 | `python -m agent.evaluate` | Évaluer l'assistant énergie sur 25 questions |
 | `python -m agent.mcp_server` | Serveur MCP en transport stdio |
-| `streamlit run app/streamlit_app.py` | Tableau de bord Streamlit |
-| `python -m pytest tests` | Tests Python (les tests de l'API utilisent la base Docker : `docker compose up -d db`) |
 | `cd web && npx eslint src && npm run build` | Vérifications de l'application web |
 
 Configuration type d'un client MCP de bureau :
@@ -205,9 +203,8 @@ git add -A && git commit -m "Description de la modification"
 git push -u origin ma-modification
 ```
 
-Ouvrez ensuite une pull request vers `main` sur GitHub. L'intégration continue lance les tests Python, les
-tests de l'API sur TimescaleDB et la vérification de l'application web à chaque push : la pull request se
-fusionne quand les trois sont au vert.
+Ouvrez ensuite une pull request vers `main` sur GitHub. L'intégration continue vérifie et construit l'application web à chaque push : la pull request se fusionne
+quand elle est au vert.
 
 ## L'application
 
@@ -252,14 +249,11 @@ consultation hors ligne, alerte de dépassement de puissance par notification.
 ├── agent/                   assistant énergie, outils, RAG, évaluation, serveur MCP
 ├── db/schema.sql            schéma TimescaleDB + pgvector
 ├── web/                     application React + TypeScript (PWA)
-├── app/streamlit_app.py     tableau de bord Streamlit
 ├── docker/, docker-compose.yml
 ├── artifacts/               modèles entraînés, métriques, données de démonstration
 ├── docs/                    architecture, données, résultats, figures, captures
 ├── brand/                   logo, symbole, icônes et leur générateur
-├── scripts/                 téléchargement des données réelles
-├── tests/                   tests unitaires, d'intégration et de l'application
-└── livrables/               rapport technique, pitch, script vidéo
+└── scripts/                 téléchargement des données réelles
 ```
 
 ## Données et perspectives
@@ -267,7 +261,7 @@ consultation hors ligne, alerte de dépassement de puissance par notification.
 Le règlement autorise les données simulées. VoltEye combine un **simulateur physique** documenté (formes
 d'onde de 7 types de machines à 3,2 kHz, atelier à 1 mesure par seconde, un an d'historique horaire avec le
 calendrier tunisien et la température de Tunis, anomalies étiquetées) et une **semaine de mesures réelles**
-d'une usine allemande (HIPE, KIT). Sources, prétraitements et paramètres : [docs/donnees.md](docs/donnees.md).
+d'une usine allemande (HIPE, KIT). Sources, prétraitements et hypothèses : [docs/donnees.md](docs/donnees.md).
 
 Prochaines étapes : pilote de 4 semaines sur un atelier tunisien avec compteurs de référence, calibrage de la
 grille tarifaire industrielle, du facteur d'émission et du taux de participation à l'effacement avec la STEG

@@ -2,15 +2,6 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "VoltEye : tableau de bord",
-      "type": "debugpy",
-      "request": "launch",
-      "module": "streamlit",
-      "args": ["run", "app/streamlit_app.py"],
-      "cwd": "${workspaceFolder}",
-      "python": "${workspaceFolder}/.venv/Scripts/python.exe"
-    },
-    {
       "name": "VoltEye : pipeline complet",
       "type": "debugpy",
       "request": "launch",

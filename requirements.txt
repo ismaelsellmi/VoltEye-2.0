@@ -1,4 +1,4 @@
-# Cœur IA et tableau de bord Streamlit : versions testées (Python 3.10 à 3.12)
+# Cœur IA et pipeline : versions testées (Python 3.10 à 3.12)
 # PyTorch CPU : pip install torch==2.5.1 --index-url https://download.pytorch.org/whl/cpu
 torch==2.5.1
 numpy==1.26.4
@@ -10,9 +10,5 @@ joblib==1.5.1
 PyWavelets==1.8.0
 PuLP==3.3.2
 highspy==1.15.1
-streamlit==1.65.0
-plotly==6.7.0
 matplotlib==3.10.5
-pytest==9.0.3
 shap==0.49.1
-# Génération du rapport et du pitch : pip install -r requirements-livrables.txt

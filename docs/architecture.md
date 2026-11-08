@@ -8,7 +8,7 @@
 | **Terminal (edge)** | Mesure V/I au point de raccordement, détection d'événements, reconnaissance IA en local | `edge/gateway.py` (conteneur Docker) | Capteur de puissance triphasé + Raspberry Pi 5 (moins de 100 $ par site) |
 | **Réseau** | Remontée des indicateurs (1 message/s) et des événements | MQTT (Mosquitto) | NB-IoT, 4G/5G ou Ethernet du site, MQTT sur TLS |
 | **Plateforme** | Ingestion, historique, prévision, anomalies, maintenance, optimisation, VoltEye Grid | API FastAPI (`api/`) + PostgreSQL / TimescaleDB + pgvector | Même pile, hébergée |
-| **Présentation** | Tableau de bord, direct, alertes, carte des zones, assistant | Application web React installable (PWA) ; Streamlit en secours | Application web et mobile + notifications |
+| **Présentation** | Tableau de bord, direct, alertes, carte des zones, assistant | Application web React installable (PWA) | Application web et mobile + notifications |
 
 Seuls les événements et les indicateurs agrégés quittent le site : les formes d'onde brutes restent sur la
 passerelle. Cela limite la bande passante et protège les données de production.
@@ -42,7 +42,7 @@ capteur (3,2 kHz) ──► mesures 1/s (P, Q, FP, THD) ──► détection de 
  passerelle edge ──MQTT──► Mosquitto ──► API FastAPI ──► PostgreSQL + TimescaleDB (+ pgvector)
  (détection + CNN)          volteye/<site>/mesures          │  ingestion, REST, WebSocket /ws/direct
                             volteye/<site>/evenements       ▼
-                                            application web (PWA) · Streamlit · assistant IA
+                                            application web (PWA) · assistant IA
 ```
 
 - **Une mesure par seconde** et les événements reconnus (avec un extrait de 40 ms de forme d'onde) : le
