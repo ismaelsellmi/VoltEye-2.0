@@ -1,12 +1,12 @@
 {
   "questions": 31,
-  "passages_indexes": 37,
+  "passages_indexes": 38,
   "methodes": {
     "VoltEye - hybride (sémantique + plein texte + couverture)": {
       "Recall@1": 0.871,
       "Recall@4": 0.968,
-      "MRR": 0.911,
-      "latence_mediane_ms": 29.9,
+      "MRR": 0.919,
+      "latence_mediane_ms": 36.5,
       "manquees": [
         "Faut-il un GPU pour faire tourner le réseau de neurones ?"
       ]
@@ -15,7 +15,7 @@
       "Recall@1": 0.548,
       "Recall@4": 0.871,
       "MRR": 0.691,
-      "latence_mediane_ms": 14.5,
+      "latence_mediane_ms": 14.2,
       "manquees": [
         "Comment un seul compteur permet-il d'identifier chaque équipement ?",
         "Quelles anomalies ont été injectées dans l'historique ?",
@@ -26,8 +26,8 @@
     "Baseline - plein texte seul (PostgreSQL)": {
       "Recall@1": 0.645,
       "Recall@4": 0.903,
-      "MRR": 0.745,
-      "latence_mediane_ms": 12.2,
+      "MRR": 0.747,
+      "latence_mediane_ms": 12.3,
       "manquees": [
         "Quel est le prix du kWh en heure de pointe ?",
         "Quelle est la MAPE de la prévision du lendemain face aux références ?",

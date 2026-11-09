@@ -42,13 +42,13 @@ déplacé hors de la pointe compte. **Ce qui n'est pas mesuré n'est pas maîtri
 | **Optimiser** le planning | Programme linéaire en nombres entiers (HiGHS) sur le tarif horaire | **-12,6 %** sur la facture des jours ouvrés, -77 kW de pointe |
 | **Produire** au soleil | Modèle photovoltaïque physique (60 kWc en toiture), charge nette, prévision J+1 | **80 %** d'autoconsommation, achat en pointe d'été divisé par 2 |
 | **Effacer** la pointe du réseau (VoltEye Grid) | Prévision J+1 de 10 zones + programme linéaire de répartition des démarrages | **-10,3 MW** sur la pointe agrégée d'été (-10,9 %), -6,5 MW face à une réponse au tarif seul |
-| **Expliquer** et **répondre** | Grad-CAM sur les images GAF ; assistant LLM outillé (11 outils VoltEye, RAG pgvector) ; serveur MCP | **25/25** réponses justes sur le jeu d'évaluation de l'assistant |
+| **Expliquer** et **répondre** | Grad-CAM sur les images GAF ; assistant LLM outillé (11 outils VoltEye, RAG hybride pgvector) ; serveur MCP | Assistant : **25/25** en mode hors ligne, **10/10** en mode LLM avec **100 %** des nombres issus des outils ; recherche documentaire : Recall@4 **96,8 %**, MRR 0,919 |
 
 Toutes les métriques sont mesurées sur des données jamais vues à l'entraînement et comparées à des
 méthodes de référence (détails : [docs/resultats.md](docs/resultats.md), page « Évaluation » de l'application).
 
 **Validé sur mesures industrielles réelles** (jeu public HIPE du KIT, une semaine au pas de 5 s) : 7 machines
-reconnues à **99,9 %** à partir de leur signature harmonique, 82 % des événements retrouvés depuis
+reconnues à **99,9 %** à partir de la signature harmonique mesurée sur chaque machine, 82 % des événements retrouvés depuis
 l'arrivée générale, prévision à 1 h meilleure que la persistance (MAPE 14,8 % contre 18,7 %), et 29 % de
 l'énergie consommée hors production mise en évidence.
 
@@ -99,7 +99,9 @@ Le dépôt est privé : acceptez d'abord l'invitation de collaborateur reçue pa
 cp .env.example .env            # PowerShell : Copy-Item .env.example .env
 ```
 
-Renseignez `ANTHROPIC_API_KEY` dans `.env` pour activer l'assistant en mode LLM. Sans clé, l'assistant
+Renseignez `ANTHROPIC_API_KEY` dans `.env` pour activer l'assistant en mode LLM. Une passerelle compatible
+avec l'API Messages (OpenRouter par exemple) fonctionne aussi : `ANTHROPIC_BASE_URL`, `ANTHROPIC_AUTH_TOKEN` et
+l'identifiant du modèle dans `VOLTEYE_LLM_MODEL` (modèle commenté dans `.env.example`). Sans clé, l'assistant
 fonctionne en mode hors ligne : il appelle les mêmes outils VoltEye et répond à partir de leurs résultats.
 Le fichier `.env` n'est jamais commité.
 
@@ -180,7 +182,8 @@ viser une autre). En développement, la clé de l'assistant se passe par variabl
 |---|---|
 | `python -m volteye.pipeline` | Tout régénérer : données, entraînement, évaluation, figures (environ 3 minutes) |
 | `python scripts/telecharger_hipe.py` | Télécharger la semaine de mesures réelles HIPE (109 Mo) avant le pipeline |
-| `python -m agent.evaluate` | Évaluer l'assistant énergie sur 25 questions |
+| `python -m agent.evaluate` | Évaluer l'assistant énergie sur 25 questions (`--offline`, `--questions 1,6,9`) |
+| `python -m agent.evaluate_rag` | Évaluer la recherche documentaire sur 31 questions annotées (Recall@k, MRR) |
 | `python -m agent.mcp_server` | Serveur MCP en transport stdio |
 | `cd web && npx eslint src && npm run build` | Vérifications de l'application web |
 

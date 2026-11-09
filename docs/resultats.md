@@ -142,9 +142,9 @@ rangs harmoniques, ont fait décider le réseau.
 
 **Assistant énergie.** Onze outils VoltEye (indicateurs, consommation hors production, anomalies, santé, solaire,
 prévision, planning, VoltEye Grid, évaluation, documentation, SQL en lecture seule) ; documentation indexée
-dans pgvector (modèle multilingue local, recherche hybride sémantique et plein texte). Évaluation sur 25
-questions dont la réponse est calculée par les outils : **25/25 réponses justes** et 25/25 bons outils en
-mode hors ligne (`python -m agent.evaluate`). Les mêmes outils sont exposés par un serveur MCP.
+dans pgvector (modèle multilingue local, recherche hybride sémantique et plein texte). Les mêmes outils sont
+exposés par un serveur MCP. Évaluation de l'assistant et de la recherche
+documentaire : section 11.
 
 ## 10. Solaire en toiture (60 kWc)
 
@@ -161,3 +161,27 @@ panneaux plein sud inclinés à 30°, ratio de performance 0,82), sur l'année s
 
 Le solaire produit pendant la pointe tarifaire d'été : il réduit de moitié l'achat au réseau à ces heures.
 Lors d'un déploiement, une prévision météorologique de nébulosité remplacera la clarté prévue.
+
+## 11. Assistant et recherche documentaire : évaluation
+
+**Assistant énergie.** Évaluation sur des questions dont la réponse est calculée par les outils
+(`python -m agent.evaluate`) ; l'ancrage est la part des nombres de la réponse retrouvés, à 1 % près, dans
+les résultats d'outils, la question ou la consigne :
+
+| Mode | Questions | Réponses justes | Bon outil | Nombres issus des outils |
+|---|---|---|---|---|
+| **LLM** (`nvidia/nemotron-3.5-super-vl`, via OpenRouter) | 10 sur 25, tous les outils | **10/10** | 10/10 | **85/85** |
+| Hors ligne (aiguillage par mots-clés) | 25 | **25/25** | 25/25 | 178/182 (conversions d'unités et texte des réponses types) |
+
+En mode LLM, le modèle choisit les outils et rédige la réponse ; chaque chiffre provient des modèles VoltEye.
+
+**Recherche documentaire (RAG).** 31 questions annotées avec les sections qui contiennent la réponse, distinctes
+du jeu de l'assistant (`python -m agent.evaluate_rag`, 38 passages) :
+
+| Recherche | Recall@1 | Recall@4 | MRR |
+|---|---|---|---|
+| **VoltEye : hybride** (sémantique + plein texte + couverture lexicale) | **87,1 %** | **96,8 %** | **0,919** |
+| Variante : sémantique seule (pgvector) | 54,8 % | 87,1 % | 0,691 |
+| Baseline : plein texte seul (PostgreSQL) | 64,5 % | 90,3 % | 0,747 |
+
+La fusion des deux recherches place le bon passage en tête pour 27 questions sur 31.
