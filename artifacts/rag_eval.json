@@ -1,0 +1,38 @@
+{
+  "questions": 31,
+  "passages_indexes": 37,
+  "methodes": {
+    "VoltEye - hybride (sémantique + plein texte + couverture)": {
+      "Recall@1": 0.871,
+      "Recall@4": 0.968,
+      "MRR": 0.911,
+      "latence_mediane_ms": 29.9,
+      "manquees": [
+        "Faut-il un GPU pour faire tourner le réseau de neurones ?"
+      ]
+    },
+    "Variante - sémantique seule (pgvector)": {
+      "Recall@1": 0.548,
+      "Recall@4": 0.871,
+      "MRR": 0.691,
+      "latence_mediane_ms": 14.5,
+      "manquees": [
+        "Comment un seul compteur permet-il d'identifier chaque équipement ?",
+        "Quelles anomalies ont été injectées dans l'historique ?",
+        "De combien de mégawatts la pointe agrégée baisse-t-elle avec la coordination ?",
+        "Quel matériel est prévu sur le site pour la passerelle ?"
+      ]
+    },
+    "Baseline - plein texte seul (PostgreSQL)": {
+      "Recall@1": 0.645,
+      "Recall@4": 0.903,
+      "MRR": 0.745,
+      "latence_mediane_ms": 12.2,
+      "manquees": [
+        "Quel est le prix du kWh en heure de pointe ?",
+        "Quelle est la MAPE de la prévision du lendemain face aux références ?",
+        "Faut-il un GPU pour faire tourner le réseau de neurones ?"
+      ]
+    }
+  }
+}

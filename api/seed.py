@@ -50,6 +50,20 @@ def _clean(v):
     return v
 
 
+METRICS = {"reconnaissance": "recognition_metrics.json", "flux": "stream_metrics.json",
+           "prevision": "forecast_metrics.json", "anomalies": "anomaly_metrics.json", "hipe": "hipe_metrics.json",
+           "assistant": "assistant_eval.json", "assistant_llm": "assistant_eval_llm.json", "solaire": "solar.json",
+           "rag": "rag_eval.json"}
+
+
+def refresh_metrics(cx):
+    """Met à jour les résultats d'évaluation à partir des artefacts (nouvelles évaluations sans réinitialiser la base)."""
+    for name, file in METRICS.items():
+        if (C.ARTIFACTS / file).exists():
+            cx.execute(text("INSERT INTO metric (name, data) VALUES (:n, :d) ON CONFLICT (name) DO UPDATE SET data = EXCLUDED.data"),
+                       {"n": name, "d": json.dumps(_load(file))})
+
+
 def seed(force=False, log=print):
     db.wait_for_db()
     db.ensure_schema()
@@ -57,6 +71,7 @@ def seed(force=False, log=print):
     eng = db.engine()
     with eng.begin() as cx:
         if not force and cx.execute(text("SELECT count(*) FROM site")).scalar():
+            refresh_metrics(cx)
             log("Base déjà initialisée.")
             return False
         cx.execute(text(f"TRUNCATE {', '.join(TABLES)} RESTART IDENTITY CASCADE"))
@@ -106,11 +121,8 @@ def seed(force=False, log=print):
         _insert(cx, "schedule_day", [{"day": d["jour"], "data": json.dumps(d)} for d in opt["jours"]])
         grid = _load("grid.json")
         _insert(cx, "grid_day", [{"day": d["jour"], "data": json.dumps(d)} for d in grid["jours"]])
-        metrics = {"reconnaissance": "recognition_metrics.json", "flux": "stream_metrics.json",
-                   "prevision": "forecast_metrics.json", "anomalies": "anomaly_metrics.json", "hipe": "hipe_metrics.json",
-                   "assistant": "assistant_eval.json", "assistant_llm": "assistant_eval_llm.json", "solaire": "solar.json"}
-        docs = [{"name": k, "data": json.dumps(_load(v))} for k, v in metrics.items() if (C.ARTIFACTS / v).exists()]
-        docs += [{"name": "optimisation", "data": json.dumps(opt["resume"])},
+        refresh_metrics(cx)
+        docs = [{"name": "optimisation", "data": json.dumps(opt["resume"])},
                  {"name": "grid", "data": json.dumps(grid["resume"])},
                  {"name": "zones", "data": json.dumps(grid["zones"])},
                  {"name": "machines", "data": json.dumps({m: {"label": MACHINE_TYPES[m].label,
