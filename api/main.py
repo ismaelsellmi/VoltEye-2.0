@@ -32,6 +32,11 @@ async def lifespan(app):
     if os.environ.get("AUTO_SEED", "1") == "1":
         from .seed import seed
         await asyncio.to_thread(seed)
+        try:                                       # index du RAG aligné sur la documentation embarquée
+            from agent.rag import sync
+            await asyncio.to_thread(sync)
+        except Exception as e:
+            logging.warning("Index documentaire non synchronisé : %s", e)
     hub.start(asyncio.get_running_loop())
     yield
     hub.stop()
