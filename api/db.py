@@ -83,6 +83,7 @@ def safe_select(sql, limit=200):
         raise ValueError("Seules les requêtes SELECT uniques sont autorisées.")
     with engine().connect() as cx:
         cx.execute(text("SET TRANSACTION READ ONLY"))
+        cx.execute(text("SET LOCAL ROLE volteye_lecture"))
         cx.execute(text("SET LOCAL statement_timeout = 5000"))
         res = cx.execute(text(f"SELECT * FROM ({q}) AS r LIMIT {int(limit)}"))
         return [dict(r._mapping) for r in res]
