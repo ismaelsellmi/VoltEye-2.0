@@ -35,6 +35,8 @@ services:
       DATABASE_URL: postgresql+psycopg://volteye:volteye@db:5432/volteye
       MQTT_HOST: mqtt
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      ANTHROPIC_AUTH_TOKEN: ${ANTHROPIC_AUTH_TOKEN:-}
+      ANTHROPIC_BASE_URL: ${ANTHROPIC_BASE_URL:-}
       VOLTEYE_LLM_MODEL: ${VOLTEYE_LLM_MODEL:-claude-opus-5-5}
     depends_on:
       db:

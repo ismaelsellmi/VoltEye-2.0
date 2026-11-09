@@ -3,6 +3,8 @@
 Mode LLM : un modèle Claude (API Anthropic) choisit et appelle les outils de `agent/tools.py`, puis rédige la
 réponse en ne citant que les chiffres renvoyés par les outils. Activé quand des identifiants Anthropic sont
 disponibles (variable ANTHROPIC_API_KEY ou profil `ant auth login`) ; modèle : VOLTEYE_LLM_MODEL.
+Passerelle compatible avec l'API Messages (OpenRouter par exemple) : ANTHROPIC_BASE_URL, ANTHROPIC_AUTH_TOKEN et
+l'identifiant du modèle de la passerelle dans VOLTEYE_LLM_MODEL.
 Mode hors ligne : un aiguillage par mots-clés appelle les mêmes outils et met en forme leurs résultats ; il
 garantit une démonstration sans réseau.
 """
@@ -12,7 +14,12 @@ import re
 
 from . import tools
 
-MODEL = os.environ.get("VOLTEYE_LLM_MODEL", "claude-opus-5-5")
+# Variables vides (transmises par docker compose) : traitées comme absentes par le SDK
+for _var in ("ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN", "ANTHROPIC_BASE_URL"):
+    if not os.environ.get(_var):
+        os.environ.pop(_var, None)
+
+MODEL = os.environ.get("VOLTEYE_LLM_MODEL") or "claude-opus-5-5"
 MAX_STEPS = 8
 SYSTEM = """Tu es l'assistant énergie de VoltEye, plateforme de suivi énergétique non intrusif d'un atelier industriel
 tunisien (7 machines suivies depuis un seul compteur) et de 10 zones industrielles (VoltEye Grid, pointe d'été du
@@ -51,6 +58,13 @@ def _run_tool(name, args):
         return {"erreur": str(e)}, True
 
 
+def _api_options():
+    """Options propres à l'API Anthropic (effort, repli serveur), omises pour une passerelle compatible."""
+    if os.environ.get("ANTHROPIC_BASE_URL"):
+        return {}
+    return {"output_config": {"effort": "medium"}, "betas": ["server-side-fallback-2026-07-01"], "fallbacks": "default"}
+
+
 def answer_llm(question, history=()):
     import anthropic
     client = anthropic.Anthropic()
@@ -64,9 +78,7 @@ def answer_llm(question, history=()):
             system=SYSTEM,
             tools=tools.SPECS,
             messages=messages,
-            output_config={"effort": "medium"},
-            betas=["server-side-fallback-2026-07-01"],
-            fallbacks="default",
+            **_api_options(),
         )
         if response.stop_reason == "refusal":
             return {"reponse": "Je ne peux pas répondre à cette demande. Posez une question sur l'énergie du site.",
