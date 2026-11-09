@@ -1,10 +1,14 @@
 """Évaluation de l'assistant énergie sur 25 questions dont la réponse est connue.
 
 La vérité terrain est calculée par les outils VoltEye eux-mêmes ; une réponse est juste si elle contient la
-bonne valeur (tolérance de 1 %, formats français ou anglais) ou le bon élément de documentation.
+bonne valeur (tolérance de 1 %, formats français ou anglais) ou le bon élément de documentation. En mode LLM,
+seule une réponse rédigée par le modèle compte (une réponse de repli hors ligne est comptée fausse).
+Ancrage : part des nombres de la réponse présents, à 1 % près, dans un résultat d'outil, la question ou la
+consigne du modèle.
 
-Usage : python -m agent.evaluate            (mode disponible : LLM si identifiants Anthropic, sinon hors ligne)
-        python -m agent.evaluate --offline  (force le mode hors ligne)
+Usage : python -m agent.evaluate                    (LLM si identifiants disponibles, sinon hors ligne)
+        python -m agent.evaluate --offline          (force le mode hors ligne)
+        python -m agent.evaluate --questions 1,6,9  (sous-ensemble, numéros de 1 à 25)
 """
 import json
 import re
@@ -72,24 +76,56 @@ def correct(answer, expected):
     return any(abs(n - expected) <= max(0.01 * abs(expected), 0.051) for n in numbers(answer))
 
 
-def run(offline=False, log=print):
+def anchoring(answer, context):
+    """Nombres de la réponse, et ceux qui figurent (à 1 % près) dans le contexte fourni au modèle."""
+    pool = numbers(context)
+    nums = numbers(answer)
+    found = [n for n in nums if any(abs(n - p) <= max(0.01 * abs(p), 0.051) for p in pool)]
+    return nums, found
+
+
+def run(offline=False, questions=None, log=print):
     if offline:
         import os
         os.environ["VOLTEYE_LLM"] = "off"
     mode = "llm" if assistant.llm_available() else "hors ligne"
+    cases = [CASES[i - 1] for i in questions] if questions else CASES
+    outputs, run_tool = [], assistant._run_tool
+
+    def traced(name, args):                       # résultats d'outils vus par le modèle, pour l'ancrage
+        result, is_error = run_tool(name, args)
+        outputs.append(json.dumps(result, ensure_ascii=False, default=str))
+        return result, is_error
+
+    assistant._run_tool = traced
     rows, t0 = [], time.time()
-    for question, tool, truth in CASES:
-        expected = truth()
-        out = assistant.answer(question)
-        ok = correct(out["reponse"], expected)
-        routed = any(s["outil"] == tool for s in out["etapes"])
-        rows.append({"question": question, "outil_attendu": tool, "outils": [s["outil"] for s in out["etapes"]],
-                     "attendu": expected, "reponse": out["reponse"], "juste": ok, "bon_outil": routed})
-        log(f"{'✓' if ok else '✗'} {'·' if routed else '!'} {question}")
+    try:
+        for question, tool, truth in cases:
+            expected = truth()
+            outputs.clear()
+            t1 = time.time()
+            out = assistant.answer(question)
+            answered_by = "hors ligne" if out.get("avertissement") else out["mode"]
+            ok = correct(out["reponse"], expected) and answered_by == mode
+            routed = any(s["outil"] == tool for s in out["etapes"])
+            nums, found = anchoring(out["reponse"], " ".join(outputs + [question, assistant.SYSTEM]))
+            rows.append({"question": question, "outil_attendu": tool, "outils": [s["outil"] for s in out["etapes"]],
+                         "attendu": expected, "reponse": out["reponse"], "mode_reponse": answered_by, "juste": ok,
+                         "bon_outil": routed, "nombres": len(nums), "nombres_ancres": len(found),
+                         "nombres_non_ancres": [n for n in nums if n not in found], "duree_s": round(time.time() - t1, 1)})
+            log(f"{'✓' if ok else '✗'} {'·' if routed else '!'} [{answered_by}] ancrage {len(found)}/{len(nums)} {question}")
+    finally:
+        assistant._run_tool = run_tool
+    cited = sum(r["nombres"] for r in rows)
     summary = {"mode": mode, "modele": assistant.MODEL if mode == "llm" else None, "questions": len(rows),
                "reponses_justes": sum(r["juste"] for r in rows), "bon_outil": sum(r["bon_outil"] for r in rows),
-               "exactitude": sum(r["juste"] for r in rows) / len(rows), "duree_s": round(time.time() - t0, 1)}
-    log(f"Exactitude des chiffres : {summary['reponses_justes']}/{summary['questions']} ; bon outil : {summary['bon_outil']}/{summary['questions']}")
+               "exactitude": sum(r["juste"] for r in rows) / len(rows),
+               "reponses_du_mode_evalue": sum(r["mode_reponse"] == mode for r in rows),
+               "nombres_cites": cited, "nombres_ancres": sum(r["nombres_ancres"] for r in rows),
+               "taux_ancrage": round(sum(r["nombres_ancres"] for r in rows) / max(cited, 1), 3),
+               "numeros_questions": questions or list(range(1, len(CASES) + 1)), "duree_s": round(time.time() - t0, 1)}
+    log(f"Exactitude des chiffres : {summary['reponses_justes']}/{summary['questions']} ; bon outil : {summary['bon_outil']}/{summary['questions']} ; "
+        f"nombres issus des outils : {summary['nombres_ancres']}/{cited}")
     name = "assistant_eval.json" if mode == "hors ligne" else "assistant_eval_llm.json"
     (C.ARTIFACTS / name).write_text(json.dumps({"resume": summary, "details": rows}, indent=2, ensure_ascii=False, default=str),
                                     encoding="utf-8")
@@ -99,4 +135,5 @@ def run(offline=False, log=print):
 if __name__ == "__main__":
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
-    run(offline="--offline" in sys.argv)
+    picked = next((a.split("=", 1)[1] if "=" in a else sys.argv[i + 1] for i, a in enumerate(sys.argv) if a.startswith("--questions")), None)
+    run(offline="--offline" in sys.argv, questions=[int(x) for x in picked.split(",")] if picked else None)

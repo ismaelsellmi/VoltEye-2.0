@@ -97,12 +97,40 @@ export default function Evaluation() {
           </p>
         </Module>
 
-        {assistant.data?.evaluation && (
+        {assistant.data?.evaluations && (
           <Module title="Assistant énergie">
-            <p className="text-[15px]">
-              <b className="num">{assistant.data.evaluation.reponses_justes}/{assistant.data.evaluation.questions}</b> réponses justes et{" "}
-              <b className="num">{assistant.data.evaluation.bon_outil}/{assistant.data.evaluation.questions}</b> bons outils sur le jeu de questions
-              dont la réponse est calculée par les outils VoltEye (mode {assistant.data.evaluation.mode}).
+            <Table
+              head={["Mode", "Réponses justes", "Bon outil", "Nombres issus des outils"]}
+              rows={(["llm", "hors_ligne"] as const)
+                .filter((k) => assistant.data!.evaluations[k])
+                .map((k) => {
+                  const v = assistant.data!.evaluations[k];
+                  return [
+                    <span className={k === "llm" ? "font-bold" : ""}>{k === "llm" ? `LLM · ${v.modele}` : "Hors ligne (aiguillage)"}</span>,
+                    <span className="num">{v.reponses_justes}/{v.questions}</span>,
+                    <span className="num">{v.bon_outil}/{v.questions}</span>,
+                    <span className="num">{v.taux_ancrage !== undefined ? pct(v.taux_ancrage) : "–"}</span>,
+                  ];
+                })}
+            />
+            <p className="mt-2 text-xs text-ink-3">
+              Questions dont la réponse est calculée par les outils VoltEye (<span className="num">python -m agent.evaluate</span>). Un nombre est
+              issu des outils s'il figure, à 1 % près, dans un résultat d'outil, la question ou la consigne.
+            </p>
+          </Module>
+        )}
+        {e.rag && (
+          <Module title="Recherche documentaire (RAG)">
+            <Table
+              head={["Recherche", "Recall@1", "Recall@4", "MRR"]}
+              rows={Object.entries(e.rag.methodes as Record<string, Json>).sort(([a], [b]) => Number(bold(b)) - Number(bold(a))).map(([k, v]) => [
+                <span className={bold(k) ? "font-bold" : ""}>{name(k)}</span>, <span className="num">{pct(v["Recall@1"])}</span>,
+                <span className="num">{pct(v["Recall@4"])}</span>, <span className="num">{nf(v.MRR, 3)}</span>,
+              ])}
+            />
+            <p className="mt-2 text-xs text-ink-3">
+              {e.rag.questions} questions annotées avec les sections attendues, {e.rag.passages_indexes} passages indexés dans pgvector
+              (<span className="num">python -m agent.evaluate_rag</span>).
             </p>
           </Module>
         )}

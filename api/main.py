@@ -310,9 +310,10 @@ def ask(req: AskRequest):
 def ask_state():
     from agent.assistant import MODEL, llm_available
     llm = llm_available()
-    ev = db.scalar("SELECT data FROM metric WHERE name = :n", n="assistant_llm" if llm else "assistant")
-    return {"mode": "llm" if llm else "hors ligne", "modele": MODEL if llm else None,
-            "evaluation": ev["resume"] if ev else None}
+    evs = {r["name"]: r["data"]["resume"] for r in db.rows("SELECT name, data FROM metric WHERE name IN ('assistant', 'assistant_llm')")}
+    ev = evs.get("assistant_llm" if llm else "assistant")
+    return {"mode": "llm" if llm else "hors ligne", "modele": MODEL if llm else None, "evaluation": ev,
+            "evaluations": {"hors_ligne": evs.get("assistant"), "llm": evs.get("assistant_llm")}}
 
 
 @app.websocket("/ws/direct")
