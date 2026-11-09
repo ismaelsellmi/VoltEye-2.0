@@ -27,6 +27,22 @@ def embedder():
     return TextEmbedding(MODEL, cache_dir=str(MODEL_DIR))
 
 
+def _pieces(para):
+    """Coupe un paragraphe plus long que MAX_CHARS par lignes ; un tableau garde son en-tête dans chaque morceau."""
+    if len(para) <= MAX_CHARS:
+        return [para]
+    lines = para.splitlines()
+    head = lines[:2] if len(lines) > 2 and lines[0].startswith("|") and set(lines[1]) <= set("|-: ") else []
+    out, cur = [], list(head)
+    for line in lines[len(head):]:
+        if len(cur) > len(head) and len("\n".join(cur + [line])) > MAX_CHARS:
+            out.append("\n".join(cur))
+            cur = list(head)
+        cur.append(line)
+    out.append("\n".join(cur))
+    return out
+
+
 def chunks():
     """Découpe chaque document par section (titres ## ou ###), puis par paragraphes si la section est longue."""
     out = []
@@ -42,7 +58,7 @@ def chunks():
             title = lines[0].lstrip("# ").strip() if lines[0].startswith("#") else name
             body = "\n".join(lines[1:] if lines[0].startswith("#") else lines).strip()
             buf = ""
-            for para in body.split("\n\n"):
+            for para in (p for block in body.split("\n\n") for p in _pieces(block)):
                 if buf and len(buf) + len(para) > MAX_CHARS:
                     out.append((name, title, buf.strip()))
                     buf = ""
@@ -70,6 +86,14 @@ def index(log=print):
                             "VALUES (:s, :t, :c, CAST(:v AS vector))"), {"s": src, "t": title, "c": content, "v": v})
     log(f"Documentation indexée : {len(items)} passages.")
     return len(items)
+
+
+def sync(log=print):
+    """Réindexe si la base ne correspond plus aux documents (appelé au démarrage de l'API)."""
+    stored = [(r["source"], r["title"], r["content"]) for r in db.rows("SELECT source, title, content FROM doc_chunk ORDER BY id")]
+    if stored != chunks():
+        return index(log)
+    return len(stored)
 
 
 def search(question, k=4, pool=8):
@@ -103,7 +127,7 @@ def search(question, k=4, pool=8):
         words = {_plain(w)[:5] for w in re.findall(r"\w{4,}", r["title"] + " " + r["content"])}
         score[i] += 2 * len(stems & words) / max(len(stems), 1)
     best = sorted(score, key=lambda i: -score[i])[:k]
-    return [{"source": f"{rows[i]['source']} › {rows[i]['title']}", "extrait": rows[i]["content"][:900],
+    return [{"source": f"{rows[i]['source']} › {rows[i]['title']}", "extrait": rows[i]["content"],
              "score": round(score[i], 3)} for i in best]
 
 

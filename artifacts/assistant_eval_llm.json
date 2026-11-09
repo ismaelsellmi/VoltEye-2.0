@@ -1,0 +1,195 @@
+{
+  "resume": {
+    "mode": "llm",
+    "modele": "nvidia/nemotron-3.5-super-vl:free",
+    "questions": 10,
+    "reponses_justes": 10,
+    "bon_outil": 10,
+    "exactitude": 1.0,
+    "reponses_du_mode_evalue": 10,
+    "nombres_cites": 85,
+    "nombres_ancres": 85,
+    "taux_ancrage": 1.0,
+    "numeros_questions": [
+      1,
+      6,
+      9,
+      11,
+      13,
+      16,
+      18,
+      20,
+      23,
+      25
+    ],
+    "duree_s": 97.1
+  },
+  "details": [
+    {
+      "question": "Combien la fuite d'air de février nous a-t-elle coûté, et que faut-il faire ?",
+      "outil_attendu": "anomalies",
+      "outils": [
+        "anomalies",
+        "recherche_documentation"
+      ],
+      "attendu": 263.5,
+      "reponse": "La fuite d'air du compresseur a coûté **263,5 TND** en février 2026, soit **940 kWh** d'excès sur **15 jours en alerte** (du 3 au 19 février). Deux causes sont détectées : une surconsommation en production et une consommation hors production (nuits/week-ends).\n\n**Que faire :**\n- Lancer une campagne de recherche de fuites (détecteur à ultrasons ou eau savonneuse sur raccords, flexibles et purgeurs).\n- Réparer en priorité les fuites les plus importantes.\n- Couper le compresseur ou isoler le réseau hors production.\n- Vérifier la pression de consigne : chaque bar inutile coûte environ **7 %** d'énergie au compresseur.",
+      "mode_reponse": "llm",
+      "juste": true,
+      "bon_outil": true,
+      "nombres": 7,
+      "nombres_ancres": 7,
+      "nombres_non_ancres": [],
+      "duree_s": 15.5
+    },
+    {
+      "question": "Quel est l'état de santé du convoyeur ?",
+      "outil_attendu": "sante",
+      "outils": [
+        "sante"
+      ],
+      "attendu": 100.0,
+      "reponse": "État de santé du convoyeur (moteur direct) au 31/10/2026 :\n\n- Score : 100 / 100\n- Dérive THD : +0,1 % (seuil d'alerte : +25 %)\n- Alerte active : non\n- Première alerte enregistrée : 21/04/2026\n\nAucun problème détecté actuellement. Une panne est anticipée dans 27 jours selon le suivi prédictif du THD.",
+      "mode_reponse": "llm",
+      "juste": true,
+      "bon_outil": true,
+      "nombres": 11,
+      "nombres_ancres": 11,
+      "nombres_non_ancres": [],
+      "duree_s": 3.5
+    },
+    {
+      "question": "Quelle machine consomme le plus, et quelle part de l'énergie ?",
+      "outil_attendu": "indicateurs",
+      "outils": [
+        "indicateurs"
+      ],
+      "attendu": 31.9,
+      "reponse": "La machine qui consomme le plus est le **four / étuve résistif** : **8 045 kWh** sur les 30 derniers jours (jusqu’au 2026-10-31), soit **31,9 %** de l’énergie totale de l’atelier (25 190 kWh).",
+      "mode_reponse": "llm",
+      "juste": true,
+      "bon_outil": true,
+      "nombres": 7,
+      "nombres_ancres": 7,
+      "nombres_non_ancres": [],
+      "duree_s": 5.5
+    },
+    {
+      "question": "Combien d'énergie est consommée hors production sur 30 jours ?",
+      "outil_attendu": "hors_production",
+      "outils": [
+        "hors_production"
+      ],
+      "attendu": 981.0,
+      "reponse": "Sur les 30 jours jusqu’au 31 octobre 2026, la consommation hors production est de **981 kWh**, soit un coût estimé de **206 TND**.\n\nRépartition par machine :\n- Compresseur d’air : 477 kWh\n- Éclairage LED : 448 kWh\n- CVC / climatisation : 56 kWh\n- Four, CNC, soudage, convoyeur : 0 kWh\n\nAction recommandée : couper automatiquement le compresseur et l’éclairage en dehors des heures de production.",
+      "mode_reponse": "llm",
+      "juste": true,
+      "bon_outil": true,
+      "nombres": 9,
+      "nombres_ancres": 9,
+      "nombres_non_ancres": [],
+      "duree_s": 5.7
+    },
+    {
+      "question": "Combien de mégawatts VoltEye Grid efface-t-il pendant la pointe d'été ?",
+      "outil_attendu": "voltEye_grid",
+      "outils": [
+        "voltEye_grid"
+      ],
+      "attendu": 10.3,
+      "reponse": "VoltEye Grid efface **10,3 MW** pendant la pointe d’été sur les 10 zones industrielles (la pointe passe de 94,4 MW à 84,1 MW), soit une réduction de 10,9 %.",
+      "mode_reponse": "llm",
+      "juste": true,
+      "bon_outil": true,
+      "nombres": 5,
+      "nombres_ancres": 5,
+      "nombres_non_ancres": [],
+      "duree_s": 5.3
+    },
+    {
+      "question": "Quelle est l'erreur de la prévision du lendemain ?",
+      "outil_attendu": "prevision",
+      "outils": [
+        "prevision"
+      ],
+      "attendu": 7.7,
+      "reponse": "L’erreur moyenne de prévision J+1 est de **7,7 %** sur la période de test du **2 septembre au 31 octobre 2026** (consommation horaire du site atelier). Par comparaison, la référence « semaine précédente » affiche 12,3 %, et l’intervalle de prévision P10–P90 couvre 88,1 % des observations réelles.\n\nAction recommandée : aucune — le modèle est déjà plus fiable que la référence simple.",
+      "mode_reponse": "llm",
+      "juste": true,
+      "bon_outil": true,
+      "nombres": 9,
+      "nombres_ancres": 9,
+      "nombres_non_ancres": [],
+      "duree_s": 4.3
+    },
+    {
+      "question": "Combien le planning optimisé fait-il économiser par an ?",
+      "outil_attendu": "planning",
+      "outils": [
+        "planning",
+        "planning",
+        "planning",
+        "recherche_documentation"
+      ],
+      "attendu": 16063.0,
+      "reponse": "Le planning optimisé permet d’économiser environ **16 000 TND par an** sur la base de 290 jours ouvrés, soit un gain moyen de **55 TND par jour** (‑12,6 % sur la facture journalière).\n\n**Action recommandée :** appliquer l’optimisation de planning sur l’ensemble des jours ouvrés et coordonner le lancement des tâches flexibles pour éviter les pointes de puissance.",
+      "mode_reponse": "llm",
+      "juste": true,
+      "bon_outil": true,
+      "nombres": 4,
+      "nombres_ancres": 4,
+      "nombres_non_ancres": [],
+      "duree_s": 25.2
+    },
+    {
+      "question": "Quelle est l'exactitude de la reconnaissance des machines ?",
+      "outil_attendu": "evaluation",
+      "outils": [
+        "evaluation",
+        "recherche_documentation"
+      ],
+      "attendu": 97.9,
+      "reponse": "L'exactitude de reconnaissance des machines de VoltEye est de **97,9 %** (évaluation sur 2 100 événements de test, 7 classes : four, compresseur, CNC, convoyeur, éclairage, soudage, CVC). Le F1 macro est de **0,979** ; le F1 par classe va de **0,94 à 1,00**.\n\nSur données industrielles réelles (site HIPE, une semaine de mesures au pas de 5 s), la reconnaissance atteint **99,9 %**. Au point de mesure unique (arrivée générale), l'attribution correcte des événements est de **88,6 %** avec les harmoniques.\n\nToutes ces valeurs proviennent de l'évaluation VoltEye (docs/resultats.md) et de la documentation technique. Période de référence des données de l'atelier : novembre 2025 à octobre 2026.",
+      "mode_reponse": "llm",
+      "juste": true,
+      "bon_outil": true,
+      "nombres": 13,
+      "nombres_ancres": 13,
+      "nombres_non_ancres": [],
+      "duree_s": 19.2
+    },
+    {
+      "question": "Comment réparer une fuite d'air comprimé ?",
+      "outil_attendu": "recherche_documentation",
+      "outils": [
+        "recherche_documentation"
+      ],
+      "attendu": "ultrasons",
+      "reponse": "Voici la méthode recommandée par VoltEye pour une fuite d’air comprimé :\n\n1. **Localiser** : lancer une campagne de détection aux ultrasons, ou appliquer de l’eau savonneuse sur les raccords, flexibles et purgeurs pour faire apparaître les bulles.\n2. **Prioriser** : réparer d’abord les fuites les plus importantes.\n3. **Isoler** : couper le compresseur ou isoler le réseau hors heures de production (nuits, week-ends, jours fériés) pour éviter qu’il tourne à vide.\n4. **Vérifier la consigne** : chaque bar de pression inutile coûte environ 7 % d’énergie supplémentaire au compresseur.\n\n**Action recommandée : organiser rapidement une détection de fuites sur le réseau d’air comprimé et réparer les fuites détectées, en commençant par les plus grosses.**",
+      "mode_reponse": "llm",
+      "juste": true,
+      "bon_outil": true,
+      "nombres": 5,
+      "nombres_ancres": 5,
+      "nombres_non_ancres": [],
+      "duree_s": 5.0
+    },
+    {
+      "question": "Pourquoi la pointe se reforme-t-elle quand chaque usine suit le tarif ?",
+      "outil_attendu": "recherche_documentation",
+      "outils": [
+        "recherche_documentation",
+        "voltEye_grid"
+      ],
+      "attendu": "rebond",
+      "reponse": "La pointe se reforme parce que toutes les usines réagissent de la même manière au tarif : chacune décale ses charges flexibles vers la même heure la moins chère. Ce comportement individuel crée un nouveau pic à cette heure (effet rebond), même si l'énergie consommée ne change pas.\n\nDonnées VoltEye Grid (10 zones industrielles, 810 usines, 30 % d'usines inscrites, 26 MW de charges flexibles ; moyenne sur les 10 jours ouvrés les plus chargés de l'été 2026) :\n- Pratique actuelle : pointe de 94,4 MW à 8 h\n- Réponse au tarif seul (chaque usine choisit l'heure la moins chère) : 90,6 MW à 15 h (effet rebond)\n- VoltEye Grid (démarrages coordonnés) : 84,1 MW, pointe étalée\n\nLa coordination évite le rebond et efface 6,5 MW de plus (-7,2 %) que la réponse tarifaire non coordonnée, pour la même énergie (60 MWh déplacés par jour).\n\nAction recommandée : passer de la réponse tarifaire individuelle à un pilotage coordonné (programme linéaire J+1 par zone) afin d'étaler les démarrages et d'empêcher la reconstitution de la pointe.",
+      "mode_reponse": "llm",
+      "juste": true,
+      "bon_outil": true,
+      "nombres": 15,
+      "nombres_ancres": 15,
+      "nombres_non_ancres": [],
+      "duree_s": 7.7
+    }
+  ]
+}

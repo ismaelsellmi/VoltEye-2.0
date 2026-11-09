@@ -32,6 +32,11 @@ async def lifespan(app):
     if os.environ.get("AUTO_SEED", "1") == "1":
         from .seed import seed
         await asyncio.to_thread(seed)
+        try:                                       # index du RAG aligné sur la documentation embarquée
+            from agent.rag import sync
+            await asyncio.to_thread(sync)
+        except Exception as e:
+            logging.warning("Index documentaire non synchronisé : %s", e)
     hub.start(asyncio.get_running_loop())
     yield
     hub.stop()
@@ -305,9 +310,10 @@ def ask(req: AskRequest):
 def ask_state():
     from agent.assistant import MODEL, llm_available
     llm = llm_available()
-    ev = db.scalar("SELECT data FROM metric WHERE name = :n", n="assistant_llm" if llm else "assistant")
-    return {"mode": "llm" if llm else "hors ligne", "modele": MODEL if llm else None,
-            "evaluation": ev["resume"] if ev else None}
+    evs = {r["name"]: r["data"]["resume"] for r in db.rows("SELECT name, data FROM metric WHERE name IN ('assistant', 'assistant_llm')")}
+    ev = evs.get("assistant_llm" if llm else "assistant")
+    return {"mode": "llm" if llm else "hors ligne", "modele": MODEL if llm else None, "evaluation": ev,
+            "evaluations": {"hors_ligne": evs.get("assistant"), "llm": evs.get("assistant_llm")}}
 
 
 @app.websocket("/ws/direct")
