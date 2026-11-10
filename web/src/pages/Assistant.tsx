@@ -16,6 +16,11 @@ const EXAMPLES: { q: string; icon: LucideIcon }[] = [
   { q: "Combien de mégawatts VoltEye Grid efface-t-il pendant la pointe d'été ?", icon: UtilityPole },
 ];
 
+/** Réponse de l'assistant : les passages entourés de ** sont affichés en gras. */
+function Emphase({ texte }: { texte: string }) {
+  return <>{texte.split(/\*\*(.+?)\*\*/g).map((part, i) => (i % 2 ? <strong key={i}>{part}</strong> : part))}</>;
+}
+
 export default function Assistant() {
   const [turns, setTurns] = useState<Turn[]>([]);
   const [q, setQ] = useState("");
@@ -134,7 +139,9 @@ export default function Assistant() {
                   )}
                   {t.a && (
                     <div className="pop w-fit max-w-full rounded-2xl rounded-tl-md border border-edge bg-module-2 px-4 py-3">
-                      <p className="whitespace-pre-line leading-relaxed">{t.a.reponse}</p>
+                      <p className="whitespace-pre-line leading-relaxed">
+                        <Emphase texte={t.a.reponse} />
+                      </p>
                       {t.a.sources.length > 0 && (
                         <p className="mt-2.5 flex flex-wrap gap-1.5 text-xs text-ink-3">
                           <span className="font-semibold">Sources :</span>
